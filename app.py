@@ -13,8 +13,13 @@ def create_app(config_class=Config):
     instance_path = os.path.join(app.root_path, 'instance')
     os.makedirs(instance_path, exist_ok=True)
 
-    # Inicializar extensiones
+    # Inicializar base de datos ORM
     db.init_app(app)
+
+    # Crear tablas en SQLite automáticamente si aún no existen
+    with app.app_context():
+        import models  # Asegura que todos los modelos estén cargados
+        db.create_all()
 
     # Registrar Blueprints (Rutas modulares)
     app.register_blueprint(main_bp)
