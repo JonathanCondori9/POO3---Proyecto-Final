@@ -1,0 +1,30 @@
+# Entornos virtuales de Python
+venv/
+env/
+.venv/
+ENV/
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Base de datos SQLite y archivos de instancia Flask
+instance/
+*.db
+*.sqlite3
+
+# Entorno y variables secretas
+.env
+.env.*
+
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store

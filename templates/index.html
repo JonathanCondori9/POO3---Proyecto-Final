@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - VetTurnos{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="hero-content">
+        <h1>Cuidamos a los consentidos de la casa</h1>
+        <p>Sistema integral de gestión de turnos para consultas clínicas, vacunación, cirugías, castraciones y ecografías de animales chicos.</p>
+        <div class="hero-buttons">
+            <a href="#" class="btn btn-primary">Reservar Turno</a>
+            <a href="#" class="btn btn-secondary">Crear Cuenta</a>
+        </div>
+    </div>
+</section>
+
+<section id="servicios" class="services-section">
+    <h2>Nuestros Servicios de Atención</h2>
+    <div class="services-grid">
+        <div class="service-card">
+            <span class="service-icon">🩺</span>
+            <h3>Consultas Generales</h3>
+            <p>Atención clínica de rutina, desparasitación y controles periódicos.</p>
+        </div>
+        <div class="service-card">
+            <span class="service-icon">💉</span>
+            <h3>Vacunación y Análisis</h3>
+            <p>Esquemas de vacunación completos y extracciones de sangre para laboratorio.</p>
+        </div>
+        <div class="service-card">
+            <span class="service-icon">🏥</span>
+            <h3>Cirugías y Castraciones</h3>
+            <p>Quirófano equipado con anestesia inhalatoria y monitoreo permanente en días asignados.</p>
+        </div>
+        <div class="service-card">
+            <span class="service-icon">📡</span>
+            <h3>Ecografías y Diagnóstico</h3>
+            <p>Diagnóstico por imágenes con especialistas veterinarios de turno.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Veterinaria - Gestión de Turnos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('main.index') }}" class="brand-logo">🐾 VetTurnos</a>
+            <nav class="nav-links">
+                <a href="{{ url_for('main.index') }}">Inicio</a>
+                <a href="#servicios">Servicios</a>
+                <a href="#contacto">Contacto</a>
+                <a href="#" class="btn-login">Iniciar Sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Contenedor de mensajes flash para alertas y notificaciones -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 VetTurnos - Sistema de Gestión de Turnos para Veterinarias de Animales Chicos | POO3</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
