@@ -28,3 +28,7 @@ instance/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Archivos temporales de Microsoft Office
+~$*.docx
+~$*.doc
