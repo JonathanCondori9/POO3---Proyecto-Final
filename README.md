@@ -121,35 +121,7 @@ python seed.py
 ### 5. Iniciar el servidor de desarrollo
 ```bash
 python app.py
-```
-Abrí tu navegador en **http://127.0.0.1:5000**.
 
----
-
-## 👥 Cuentas de Acceso de Prueba (Demo)
-
-| Rol | Correo Electrónico | Contraseña | Mascotas / Funciones |
-| :--- | :--- | :--- | :--- |
-| **Cliente** | `juan.perez@gmail.com` | `cliente123` | Dueño de Milo (Perro) y Luna (Gato). Puede gestionar turnos y mascotas. |
-| **Administrador** | `admin@veterinaria.com` | `admin123` | Control total del consultorio, agenda médica y staff veterinario. |
-
----
-
-## 📋 Mapeo de Casos de Uso (Etapa 1)
-
-* `CU-01` Crear cuenta
-* `CU-02` Iniciar Sesión
-* `CU-03` Modificar perfil
-* `CU-04` Gestionar perfil mascota
-* `CU-05` Visualizar horarios y días
-* `CU-06` Reservar turno general
-* `CU-07` Reservar turno particular (Cirugías, ecografías, quirófano)
-* `CU-08` Modificar turno
-* `CU-09` Cancelar turno (libera cupo)
-* `CU-10` Ver historial de turnos
-* `CU-11` Ver notificaciones
-* `CU-12` Gestionar agenda de turnos y asistencia
-* `CU-13` Asignar turno (control)
 * `CU-14` Reasignar turno
 * `CU-15` Ver datos del cliente / mascota
 * `CU-16` Gestionar veterinarios
