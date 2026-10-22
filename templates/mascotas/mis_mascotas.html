@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Mascotas - VetTurnos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>🐾 Mis Mascotas</h1>
+        <p>Administrá el perfil de tus animales para asignarles turnos veterinarios.</p>
+    </div>
+    <a href="{{ url_for('mascotas.nueva_mascota') }}" class="btn btn-primary">+ Agregar Mascota</a>
+</div>
+
+{% if mascotas %}
+    <div class="pets-grid">
+        {% for mascota in mascotas %}
+            <div class="pet-card">
+                <div class="pet-card-header">
+                    <span class="pet-icon">
+                        {% if mascota.especie.lower() == 'perro' %}🐶
+                        {% elif mascota.especie.lower() == 'gato' %}🐱
+                        {% else %}🐾
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h3>{{ mascota.nombre }}</h3>
+                        <span class="pet-badge">{{ mascota.especie }}</span>
+                    </div>
+                </div>
+
+                <div class="pet-details">
+                    <p><strong>Raza:</strong> {{ mascota.raza }}</p>
+                    <p><strong>Edad:</strong> {{ mascota.edad or 'No especificada' }}</p>
+                    {% if mascota.observaciones %}
+                        <p class="pet-notes"><strong>Observaciones:</strong> {{ mascota.observaciones }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="pet-actions">
+                    <a href="{{ url_for('mascotas.editar_mascota', id=mascota.id) }}" class="btn btn-secondary btn-sm">Editar Datos</a>
+                    <a href="#" class="btn btn-primary btn-sm">Solicitar Turno</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <span class="empty-icon">🐕</span>
+        <h3>Aún no registraste ninguna mascota</h3>
+        <p>Para poder solicitar turnos de consulta o cirugías, necesitás registrar al menos a uno de tus animalitos.</p>
+        <a href="{{ url_for('mascotas.nueva_mascota') }}" class="btn btn-primary">Registrar mi primera mascota</a>
+    </div>
+{% endif %}
+{% endblock %}

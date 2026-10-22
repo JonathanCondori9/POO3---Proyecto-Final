@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} - VetTurnos{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>🐾 {{ titulo }}</h2>
+            <p>Completá los datos de tu mascota (animales chicos: perros y gatos).</p>
+        </div>
+
+        <form method="POST" class="styled-form">
+            <div class="form-group">
+                <label for="nombre">Nombre de la Mascota: *</label>
+                <input type="text" id="nombre" name="nombre" value="{{ mascota.nombre if mascota else '' }}" required placeholder="Ej: Milo, Luna, Rocco">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="especie">Especie: *</label>
+                    <select id="especie" name="especie" required>
+                        <option value="" disabled {% if not mascota %}selected{% endif %}>Seleccionar especie...</option>
+                        <option value="Perro" {% if mascota and mascota.especie == 'Perro' %}selected{% endif %}>Perro 🐶</option>
+                        <option value="Gato" {% if mascota and mascota.especie == 'Gato' %}selected{% endif %}>Gato 🐱</option>
+                        <option value="Otro" {% if mascota and mascota.especie not in ['Perro', 'Gato'] %}selected{% endif %}>Otro animal chico 🐾</option>
+                    </select>
+                </div>
+
+                <div class="form-group col">
+                    <label for="raza">Raza:</label>
+                    <input type="text" id="raza" name="raza" value="{{ mascota.raza if mascota else '' }}" placeholder="Ej: Mestizo, Caniche, Siamés">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="edad">Edad aproximada:</label>
+                <input type="text" id="edad" name="edad" value="{{ mascota.edad if mascota else '' }}" placeholder="Ej: 3 años, 6 meses">
+            </div>
+
+            <div class="form-group">
+                <label for="observaciones">Observaciones clínicas o antecedentes:</label>
+                <textarea id="observaciones" name="observaciones" rows="3" placeholder="Alergias, tratamientos previos, temperamento, etc.">{{ mascota.observaciones if mascota else '' }}</textarea>
+            </div>
+
+            <div class="form-buttons">
+                <a href="{{ url_for('mascotas.mis_mascotas') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">{{ accion }} Mascota</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

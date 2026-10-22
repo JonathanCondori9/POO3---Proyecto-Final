@@ -5,11 +5,16 @@
 {% block content %}
 <section class="hero-section">
     <div class="hero-content">
-        <h1>Cuidamos a los consentidos de la casa</h1>
+        <h1>🐾 Cuidamos a los consentidos de la casa</h1>
         <p>Sistema integral de gestión de turnos para consultas clínicas, vacunación, cirugías, castraciones y ecografías de animales chicos.</p>
         <div class="hero-buttons">
-            <a href="#" class="btn btn-primary">Reservar Turno</a>
-            <a href="#" class="btn btn-secondary">Crear Cuenta</a>
+            {% if session.get('usuario_id') %}
+                <a href="{{ url_for('mascotas.mis_mascotas') }}" class="btn btn-primary">🐶 Ver Mis Mascotas</a>
+                <a href="{{ url_for('auth.perfil') }}" class="btn btn-secondary">Mi Perfil</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Iniciar Sesión</a>
+                <a href="{{ url_for('auth.registro') }}" class="btn btn-secondary">Crear Cuenta</a>
+            {% endif %}
         </div>
     </div>
 </section>

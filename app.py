@@ -3,6 +3,8 @@ from flask import Flask
 from config import Config
 from models import db
 from routes.main_routes import main_bp
+from routes.auth_routes import auth_bp
+from routes.mascota_routes import mascota_bp
 
 def create_app(config_class=Config):
     """Fábrica de la aplicación Flask (Application Factory Pattern)."""
@@ -23,6 +25,8 @@ def create_app(config_class=Config):
 
     # Registrar Blueprints (Rutas modulares)
     app.register_blueprint(main_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(mascota_bp)
 
     return app
 

@@ -12,9 +12,19 @@
             <a href="{{ url_for('main.index') }}" class="brand-logo">🐾 VetTurnos</a>
             <nav class="nav-links">
                 <a href="{{ url_for('main.index') }}">Inicio</a>
-                <a href="#servicios">Servicios</a>
-                <a href="#contacto">Contacto</a>
-                <a href="#" class="btn-login">Iniciar Sesión</a>
+                
+                {% if session.get('usuario_id') %}
+                    {% if session.get('usuario_rol') == 'ADMIN' %}
+                        <a href="#" class="badge-role">Panel Admin</a>
+                    {% endif %}
+                    <a href="{{ url_for('mascotas.mis_mascotas') }}">Mis Mascotas</a>
+                    <a href="{{ url_for('auth.perfil') }}">Mi Perfil</a>
+                    <span class="user-greeting">Hola, <strong>{{ session.get('usuario_nombre') }}</strong></span>
+                    <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{{ url_for('auth.registro') }}">Registrarse</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn-login">Iniciar Sesión</a>
+                {% endif %}
             </nav>
         </div>
     </header>
