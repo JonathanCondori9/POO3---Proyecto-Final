@@ -117,11 +117,3 @@ Pobla la base de datos SQLite con usuarios, mascotas, veterinarios y turnos de e
 ```bash
 python seed.py
 ```
-
-### 5. Iniciar el servidor de desarrollo
-```bash
-python app.py
-
-* `CU-14` Reasignar turno
-* `CU-15` Ver datos del cliente / mascota
-* `CU-16` Gestionar veterinarios
