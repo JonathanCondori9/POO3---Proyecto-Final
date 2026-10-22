@@ -22,56 +22,56 @@ El sistema implementa el patrón arquitectónico **MVC / MVT (Modelo - Vista - C
 POO3 - Proyecto Final/
 │
 ├── ⚙️ CONFIGURACIÓN Y ARRANQUE
-│   ├── app.py                      # Fábrica de la aplicación (Application Factory Pattern)
-│   ├── config.py                   # Configuración de SQLite (DATABASE_URI) y SECRET_KEY
-│   ├── requirements.txt            # Dependencias del proyecto (Flask, SQLAlchemy, etc.)
-│   ├── seed.py                     # Script para poblar la BD con datos iniciales de prueba
-│   ├── README.md                   # Documentación general del repositorio
-│   └── .gitignore                  # Exclusión de venv, base de datos local y temporales
+│   ├── app.py                      
+│   ├── config.py                   
+│   ├── requirements.txt            
+│   ├── seed.py                     
+│   ├── README.md                   
+│   └── .gitignore                  
 │
 ├── 🧠 M: MODELOS (POO / Base de Datos)
 │   └── models/
-│       ├── __init__.py             # Instancia global de SQLAlchemy (db) y exportación de modelos
-│       ├── usuario.py              # Clase Usuario (Clientes y Administradores con hashing seguro)
-│       ├── mascota.py              # Clase Mascota (Perros y gatos vinculados al dueño)
-│       ├── veterinario.py          # Clase Veterinario (Matrícula y especialidades clínicas)
-│       ├── tipo_turno.py           # Clase TipoTurno (Cirugías, consultas, duraciones y días)
-│       ├── turno.py                # Clase Turno (Ciclo de Vida: PENDIENTE, ATENDIDO, AUSENTE, CANCELADO)
-│       └── notificacion.py         # Clase Notificacion (Avisos del sistema con estado de lectura)
+│       ├── __init__.py             
+│       ├── usuario.py              
+│       ├── mascota.py              
+│       ├── veterinario.py          
+│       ├── tipo_turno.py           
+│       ├── turno.py                
+│       └── notificacion.py         
 │
 ├── 🎮 C: CONTROLADORES (Rutas y Lógica de Negocio)
 │   └── routes/
-│       ├── __init__.py             # Paquete de rutas
-│       ├── auth_utils.py           # Decoradores de seguridad (@login_required, @admin_required)
-│       ├── main_routes.py          # Blueprint para portada y páginas públicas (/)
-│       ├── auth_routes.py          # Blueprint para login, registro, logout y perfil (/auth/...)
-│       └── mascota_routes.py       # Blueprint para listar, agregar y editar mascotas (/mascotas/...)
+│       ├── __init__.py             
+│       ├── auth_utils.py           
+│       ├── main_routes.py          
+│       ├── auth_routes.py          
+│       └── mascota_routes.py       
 │
 ├── 👁️ V: VISTAS (Plantillas HTML con Jinja2)
 │   └── templates/
-│       ├── base.html               # Layout maestro (Navbar dinámica, alertas flash y footer)
-│       ├── index.html              # Portada del consultorio y catálogo de servicios
+│       ├── base.html               
+│       ├── index.html              
 │       ├── auth/
-│       │   ├── login.html          # Formulario de inicio de sesión
-│       │   ├── registro.html       # Formulario para registro de nuevos clientes
-│       │   └── perfil.html         # Actualización de datos personales y contraseña
+│       │   ├── login.html          
+│       │   ├── registro.html       
+│       │   └── perfil.html         
 │       └── mascotas/
-│           ├── mis_mascotas.html   # Grilla de mascotas registradas por el cliente
-│           └── form_mascota.html   # Formulario de alta y edición de mascotas
+│           ├── mis_mascotas.html   
+│           └── form_mascota.html   
 │
 ├── 🎨 RECURSOS ESTÁTICOS
 │   └── static/
 │       └── css/
-│           └── styles.css          # Estilos responsivos con paleta Violeta (#855ad0) y Blanco
+│           └── styles.css          
 │
 ├── 🗄️ BASE DE DATOS LOCAL
 │   └── instance/
-│       └── veterinaria.db          # Archivo físico SQLite con las 6 tablas generadas
+│       └── veterinaria.db          
 │
 └── 📄 DOCUMENTACIÓN DE ENTREGA
-    ├── DER.md                      # Diagrama Entidad-Relación y Máquina de Estados
-    ├── Diagrama_DER.png            # Imagen del DER
-    └── TP_Final_Etapa_1_Actualizado.docx # Documento de entrega formal para la cátedra
+    ├── DER.md                      
+    ├── Diagrama_DER.png            
+    └── TP_Final_Etapa_1_Actualizado.docx 
 ```
 
 ---
