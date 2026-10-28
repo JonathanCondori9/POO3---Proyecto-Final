@@ -1,4 +1,4 @@
-﻿import os
+import os
 from flask import Flask
 from config import Config
 from models import db
@@ -9,7 +9,7 @@ from routes.turno_routes import turno_bp
 from routes.admin_routes import admin_bp
 
 def create_app(config_class=Config):
-    """FÃ¡brica de la aplicaciÃ³n Flask (Application Factory Pattern)."""
+    """Fábrica de la aplicación Flask (Application Factory Pattern)."""
     app = Flask(__name__)
     app.config.from_object(config_class)
 
@@ -20,9 +20,9 @@ def create_app(config_class=Config):
     # Inicializar base de datos ORM
     db.init_app(app)
 
-    # Crear tablas en SQLite automÃ¡ticamente si aÃºn no existen
+    # Crear tablas en SQLite automáticamente si aún no existen
     with app.app_context():
-        import models  # Asegura que todos los modelos estÃ©n cargados
+        import models  # Asegura que todos los modelos estén cargados
         db.create_all()
 
     # Registrar Blueprints (Rutas modulares)

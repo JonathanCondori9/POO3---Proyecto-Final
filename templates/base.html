@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Veterinaria - GestiÃ³n de Turnos{% endblock %}</title>
+    <title>{% block title %}Veterinaria - Gestión de Turnos{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <header class="navbar">
         <div class="nav-container">
-            <a href="{{ url_for('main.index') }}" class="brand-logo">ðŸ¾ VetTurnos</a>
+            <a href="{{ url_for('main.index') }}" class="brand-logo">🐾 VetTurnos</a>
             <nav class="nav-links">
                 <a href="{{ url_for('main.index') }}">Inicio</a>
                 
@@ -21,10 +21,10 @@
                     <a href="{{ url_for('turnos.mis_turnos') }}">Mis Turnos</a>
                     <a href="{{ url_for('auth.perfil') }}">Mi Perfil</a>
                     <span class="user-greeting">Hola, <strong>{{ session.get('usuario_nombre') }}</strong></span>
-                    <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar SesiÃ³n</a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar Sesión</a>
                 {% else %}
                     <a href="{{ url_for('auth.registro') }}">Registrarse</a>
-                    <a href="{{ url_for('auth.login') }}" class="btn-login">Iniciar SesiÃ³n</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn-login">Iniciar Sesión</a>
                 {% endif %}
             </nav>
         </div>
@@ -46,7 +46,7 @@
     </main>
 
     <footer class="footer">
-        <p>&copy; 2026 VetTurnos - Sistema de GestiÃ³n de Turnos para Veterinarias de Animales Chicos | POO3</p>
+        <p>&copy; 2026 VetTurnos - Sistema de Gestión de Turnos para Veterinarias de Animales Chicos | POO3</p>
     </footer>
 
     {% block scripts %}{% endblock %}
