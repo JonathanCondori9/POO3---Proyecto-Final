@@ -106,6 +106,10 @@
                                     <button type="submit" class="btn btn-sm btn-warning-outline"
                                             title="Marcar como ausente">⚠️ Ausente</button>
                                 </form>
+                                <!-- Reasignar Turno -->
+                                <a href="{{ url_for('admin.reprogramar_turno', id=t.id) }}"
+                                   class="btn btn-sm btn-secondary"
+                                   title="Reasignar / Reprogramar turno">📅 Reasignar</a>
                             {% else %}
                                 <span class="text-muted" style="font-size:0.82rem;">Sin acciones</span>
                                 {% if t.observaciones %}

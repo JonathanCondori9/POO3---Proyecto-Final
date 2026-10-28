@@ -29,13 +29,29 @@
 
                 <div class="form-group col">
                     <label for="raza">Raza:</label>
-                    <input type="text" id="raza" name="raza" value="{{ mascota.raza if mascota else '' }}" placeholder="Ej: Mestizo, Caniche, Siamés">
+                    <input type="text" id="raza" name="raza" value="{{ mascota.raza if mascota and mascota.raza != 'No especificado' else '' }}" placeholder="Ej: Mestizo, Caniche, Siamés">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="peso">Peso (kg):</label>
+                    <input type="text" id="peso" name="peso" value="{{ mascota.peso if mascota and mascota.peso and mascota.peso != 'No especificado' else '' }}" placeholder="Ej: 8.5 kg, 12 kg">
+                </div>
+
+                <div class="form-group col">
+                    <label for="genero">Género:</label>
+                    <select id="genero" name="genero">
+                        <option value="" {% if not mascota or not mascota.genero or mascota.genero == 'No especificado' %}selected{% endif %}>Seleccionar género...</option>
+                        <option value="Macho" {% if mascota and mascota.genero == 'Macho' %}selected{% endif %}>Macho ♂</option>
+                        <option value="Hembra" {% if mascota and mascota.genero == 'Hembra' %}selected{% endif %}>Hembra ♀</option>
+                    </select>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="edad">Edad aproximada:</label>
-                <input type="text" id="edad" name="edad" value="{{ mascota.edad if mascota else '' }}" placeholder="Ej: 3 años, 6 meses">
+                <input type="text" id="edad" name="edad" value="{{ mascota.edad if mascota and mascota.edad != 'No especificado' else '' }}" placeholder="Ej: 3 años, 6 meses">
             </div>
 
             <div class="form-group">

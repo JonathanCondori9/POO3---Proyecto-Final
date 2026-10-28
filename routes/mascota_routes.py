@@ -22,6 +22,8 @@ def nueva_mascota():
         especie = request.form.get('especie', '').strip()
         raza = request.form.get('raza', '').strip() or 'No especificado'
         edad = request.form.get('edad', '').strip() or 'No especificado'
+        peso = request.form.get('peso', '').strip() or 'No especificado'
+        genero = request.form.get('genero', '').strip() or 'No especificado'
         observaciones = request.form.get('observaciones', '').strip()
 
         if not nombre or not especie:
@@ -34,6 +36,8 @@ def nueva_mascota():
             especie=especie,
             raza=raza,
             edad=edad,
+            peso=peso,
+            genero=genero,
             observaciones=observaciones
         )
 
@@ -62,6 +66,8 @@ def editar_mascota(id):
         especie = request.form.get('especie', '').strip()
         raza = request.form.get('raza', '').strip() or 'No especificado'
         edad = request.form.get('edad', '').strip() or 'No especificado'
+        peso = request.form.get('peso', '').strip() or 'No especificado'
+        genero = request.form.get('genero', '').strip() or 'No especificado'
         observaciones = request.form.get('observaciones', '').strip()
 
         if not nombre or not especie:
@@ -72,6 +78,8 @@ def editar_mascota(id):
         mascota.especie = especie
         mascota.raza = raza
         mascota.edad = edad
+        mascota.peso = peso
+        mascota.genero = genero
         mascota.observaciones = observaciones
 
         db.session.commit()

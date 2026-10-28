@@ -1114,3 +1114,224 @@ body {
 .text-muted {
     color: var(--text-muted);
 }
+
+/* ============================================================
+   MÓDULO NOTIFICACIONES (HU-09: Centro de Notificaciones)
+   ============================================================ */
+
+/* Navbar link y badge */
+.nav-notif-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-notif-btn:hover {
+    color: var(--primary-color);
+}
+
+.badge-notif {
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    line-height: 1;
+    box-shadow: 0 2px 4px rgba(133, 90, 208, 0.3);
+}
+
+/* Sección Notificaciones */
+.notif-section h2 {
+    font-size: 1.25rem;
+    color: var(--text-dark);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-subtle);
+}
+
+.notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+/* Tarjeta de notificación */
+.notif-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.1rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.notif-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.notif-card-unread {
+    background: #ffffff;
+    border-left: 5px solid var(--primary-color);
+}
+
+.notif-confirmacion { border-left-color: var(--success-color); }
+.notif-reasignacion { border-left-color: #dd6b20; }
+.notif-cancelacion  { border-left-color: var(--danger-color); }
+.notif-info         { border-left-color: var(--primary-color); }
+
+.notif-card-read {
+    background: #fdfdfd;
+    opacity: 0.82;
+    border-left: 4px solid #cbd5e0;
+}
+
+.notif-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+    padding-top: 0.1rem;
+}
+
+.notif-icon-read {
+    font-size: 1.2rem;
+    color: var(--success-color);
+    padding-top: 0.2rem;
+}
+
+.notif-body {
+    flex: 1;
+}
+
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.notif-type-tag {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+}
+
+.tag-confirmacion {
+    background: var(--success-light);
+    color: #276749;
+    border: 1px solid #9ae6b4;
+}
+
+.tag-reasignacion {
+    background: #fffaf0;
+    color: #c05621;
+    border: 1px solid #fbd38d;
+}
+
+.tag-cancelacion {
+    background: var(--danger-light);
+    color: #742a2a;
+    border: 1px solid #feb2b2;
+}
+
+.tag-info {
+    background: var(--primary-light);
+    color: var(--primary-hover);
+    border: 1px solid var(--primary-border);
+}
+
+.tag-read {
+    background: #edf2f7;
+    color: #718096;
+}
+
+.notif-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.notif-text {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+.notif-actions {
+    display: flex;
+    align-items: center;
+}
+
+.btn-outline-primary {
+    background: transparent;
+    color: var(--primary-color);
+    border: 1.5px solid var(--primary-color);
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-link-danger {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.2rem;
+    opacity: 0.65;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-link-danger:hover {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+/* Caja de bandeja vacía (HU-09 Escenario 4) */
+.notif-empty-box {
+    background: var(--white);
+    border: 1px dashed var(--primary-border);
+    border-radius: 14px;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.notif-empty-box .empty-icon-sm {
+    font-size: 2.8rem;
+    margin-bottom: 0.8rem;
+    display: inline-block;
+}
+
+.notif-empty-box .empty-primary-text {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.4rem;
+}
+
+.notif-empty-box .empty-sub-text {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    max-width: 500px;
+    margin: 0 auto;
+}

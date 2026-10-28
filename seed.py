@@ -51,6 +51,8 @@ def poblar_base_de_datos():
             especie="Perro",
             raza="Golden Retriever",
             edad="3 años",
+            peso="28 kg",
+            genero="Macho",
             observaciones="Alérgico a picaduras de pulgas."
         )
         gato = Mascota(
@@ -59,6 +61,8 @@ def poblar_base_de_datos():
             especie="Gato",
             raza="Siamés",
             edad="1 año",
+            peso="4.2 kg",
+            genero="Hembra",
             observaciones="Plan de vacunación al día."
         )
 

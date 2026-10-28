@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Reasignar Turno — Panel Admin — VetTurnos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>📅 Reasignación Operativa de Turno</h1>
+        <p>Modificación de fecha, horario o profesional asignado (HU-09 / CU-03).</p>
+    </div>
+    <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary">← Volver a Agenda</a>
+</div>
+
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Cita de {{ turno.mascota.nombre }}</h2>
+            <p><strong>Propietario:</strong> {{ turno.usuario.nombre_completo }} | <strong>Práctica:</strong> {{ turno.tipo_turno.nombre }}</p>
+            <p><strong>Fecha actual:</strong> {{ turno.fecha_hora.strftime('%d/%m/%Y a las %H:%M hs') }}</p>
+        </div>
+
+        <form method="POST" class="styled-form">
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="fecha">Nueva Fecha: *</label>
+                    <input type="date" id="fecha" name="fecha" value="{{ turno.fecha_hora.strftime('%Y-%m-%d') }}" required>
+                </div>
+                <div class="form-group col">
+                    <label for="hora">Nuevo Horario (HH:MM): *</label>
+                    <input type="time" id="hora" name="hora" value="{{ turno.fecha_hora.strftime('%H:%M') }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="veterinario_id">Profesional Veterinario:</label>
+                <select id="veterinario_id" name="veterinario_id">
+                    {% for vet in veterinarios %}
+                        <option value="{{ vet.id }}" {% if turno.veterinario_id == vet.id %}selected{% endif %}>
+                            {{ vet.nombre_completo }} — {{ vet.especialidad }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="slot-alert alert-warning" style="margin-bottom: 1.5rem;">
+                ℹ️ Al guardar los cambios, el sistema despachará automáticamente una alerta prioritaria al Centro de Notificaciones del cliente con los nuevos datos de su cita.
+            </div>
+
+            <div class="form-buttons">
+                <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar Reasignación</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

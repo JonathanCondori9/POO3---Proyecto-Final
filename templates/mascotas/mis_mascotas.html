@@ -31,6 +31,12 @@
                 <div class="pet-details">
                     <p><strong>Raza:</strong> {{ mascota.raza }}</p>
                     <p><strong>Edad:</strong> {{ mascota.edad or 'No especificada' }}</p>
+                    {% if mascota.peso and mascota.peso != 'No especificado' %}
+                        <p><strong>Peso:</strong> {{ mascota.peso }}</p>
+                    {% endif %}
+                    {% if mascota.genero and mascota.genero != 'No especificado' %}
+                        <p><strong>Género:</strong> {{ mascota.genero }}</p>
+                    {% endif %}
                     {% if mascota.observaciones %}
                         <p class="pet-notes"><strong>Observaciones:</strong> {{ mascota.observaciones }}</p>
                     {% endif %}

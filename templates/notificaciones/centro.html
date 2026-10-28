@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Centro de Notificaciones - VetTurnos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>🔔 Centro de Notificaciones</h1>
+        <p>Seguimiento, confirmaciones de turnos y avisos del sistema.</p>
+    </div>
+    {% if notificaciones_nuevas %}
+        <form method="POST" action="{{ url_for('notificaciones.marcar_todas_leidas') }}">
+            <button type="submit" class="btn btn-secondary btn-sm">
+                ✓ Marcar todas como leídas
+            </button>
+        </form>
+    {% endif %}
+</div>
+
+<!-- Sección 1: Notificaciones Nuevas / Pendientes -->
+<section class="notif-section">
+    <h2>Nuevas Alertas ({% if notificaciones_nuevas %}{{ notificaciones_nuevas|length }}{% else %}0{% endif %})</h2>
+
+    {% if notificaciones_nuevas %}
+        <div class="notif-list">
+            {% for n in notificaciones_nuevas %}
+                <div class="notif-card notif-card-unread notif-{{ n.tipo|lower }}">
+                    <div class="notif-icon">
+                        {% if n.tipo == 'CONFIRMACION' %}
+                            ✅
+                        {% elif n.tipo == 'REASIGNACION' %}
+                            ⚠️
+                        {% elif n.tipo == 'CANCELACION' %}
+                            ✖️
+                        {% else %}
+                            ℹ️
+                        {% endif %}
+                    </div>
+                    <div class="notif-body">
+                        <div class="notif-header">
+                            <span class="notif-type-tag tag-{{ n.tipo|lower }}">
+                                {% if n.tipo == 'CONFIRMACION' %}
+                                    Turno Confirmado
+                                {% elif n.tipo == 'REASIGNACION' %}
+                                    Reasignación Operativa
+                                {% elif n.tipo == 'CANCELACION' %}
+                                    Turno Cancelado
+                                {% else %}
+                                    Aviso del Sistema
+                                {% endif %}
+                            </span>
+                            <span class="notif-date">{{ n.fecha_envio.strftime('%d/%m/%Y %H:%M') }}</span>
+                        </div>
+                        <p class="notif-text">{{ n.mensaje }}</p>
+                    </div>
+                    <div class="notif-actions">
+                        <form method="POST" action="{{ url_for('notificaciones.marcar_leida', id=n.id) }}">
+                            <button type="submit" class="btn btn-sm btn-outline-primary" title="Marcar como leída">
+                                Marcar como leída
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Escenario 4: Bandeja sin mensajes nuevos -->
+        <div class="notif-empty-box">
+            <span class="empty-icon-sm">✨</span>
+            <p class="empty-primary-text">No tienes notificaciones nuevas en este momento</p>
+            <p class="empty-sub-text">Te avisaremos automáticamente cada vez que reserves, reprogrames o recibas novedades sobre tus turnos.</p>
+        </div>
+    {% endif %}
+</section>
+
+<!-- Sección 2: Historial de Notificaciones Pasadas -->
+{% if notificaciones_historial %}
+<section class="notif-section" style="margin-top: 3rem;">
+    <h2>Historial de Notificaciones Pasadas</h2>
+    <div class="notif-list">
+        {% for n in notificaciones_historial %}
+            <div class="notif-card notif-card-read">
+                <div class="notif-icon-read">✔️</div>
+                <div class="notif-body">
+                    <div class="notif-header">
+                        <span class="notif-type-tag tag-read">Leída</span>
+                        <span class="notif-date">{{ n.fecha_envio.strftime('%d/%m/%Y %H:%M') }}</span>
+                    </div>
+                    <p class="notif-text text-muted">{{ n.mensaje }}</p>
+                </div>
+                <div class="notif-actions">
+                    <form method="POST" action="{{ url_for('notificaciones.eliminar', id=n.id) }}" onsubmit="return confirm('¿Eliminar esta notificación del historial?')">
+                        <button type="submit" class="btn btn-sm btn-link-danger" title="Eliminar del historial">
+                            🗑️
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

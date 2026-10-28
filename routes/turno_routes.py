@@ -108,6 +108,7 @@ def reservar_turno():
         noti = Notificacion(
             usuario_id=usuario_id,
             mensaje=f"Turno confirmado para {mascota.nombre} ({tipo_turno.practica}) el {fecha_hora_reserva.strftime('%d/%m/%Y a las %H:%M hs')}."
+            , tipo='CONFIRMACION'
         )
         db.session.add(noti)
         db.session.commit()
@@ -179,7 +180,7 @@ def cancelar_turno(id):
 
     noti = Notificacion(
         usuario_id=usuario_id,
-        mensaje=f"Has cancelado el turno de {turno.mascota.nombre} previsto para el {turno.fecha_hora.strftime('%d/%m/%Y a las %H:%M hs')}."
+        mensaje=f"Has cancelado el turno de {turno.mascota.nombre} previsto para el {turno.fecha_hora.strftime('%d/%m/%Y a las %H:%M hs')}.", tipo='CANCELACION'
     )
     db.session.add(noti)
     db.session.commit()
@@ -225,7 +226,7 @@ def modificar_turno(id):
 
         noti = Notificacion(
             usuario_id=usuario_id,
-            mensaje=f"El turno de {turno.mascota.nombre} fue reprogramado para el {nueva_fecha_hora.strftime('%d/%m/%Y a las %H:%M hs')}."
+            mensaje=f"El turno de {turno.mascota.nombre} fue reprogramado para el {nueva_fecha_hora.strftime('%d/%m/%Y a las %H:%M hs')}.", tipo='REASIGNACION'
         )
         db.session.add(noti)
         db.session.commit()

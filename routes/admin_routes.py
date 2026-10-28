@@ -6,6 +6,7 @@ from models.veterinario import Veterinario
 from models.usuario import Usuario
 from models.mascota import Mascota
 from models.tipo_turno import TipoTurno
+from models.notificacion import Notificacion
 from routes.auth_utils import admin_required
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -111,6 +112,13 @@ def marcar_atendido(id):
 
     observaciones = request.form.get('observaciones', '').strip() or None
     turno.marcar_atendido(observaciones)
+    
+    noti = Notificacion(
+        usuario_id=turno.usuario_id,
+        mensaje=f"Tu turno para {turno.mascota.nombre} ({turno.tipo_turno.practica}) ha sido completado y atendido con éxito.",
+        tipo='CONFIRMACION'
+    )
+    db.session.add(noti)
     db.session.commit()
 
     flash(
@@ -134,6 +142,13 @@ def marcar_ausente(id):
         return redirect(request.referrer or url_for('admin.agenda'))
 
     turno.marcar_ausente()
+    
+    noti = Notificacion(
+        usuario_id=turno.usuario_id,
+        mensaje=f"Aviso de inasistencia: El turno de {turno.mascota.nombre} el {turno.fecha_hora.strftime('%d/%m/%Y %H:%M hs')} fue registrado como AUSENTE.",
+        tipo='INFO'
+    )
+    db.session.add(noti)
     db.session.commit()
 
     flash(
@@ -142,6 +157,52 @@ def marcar_ausente(id):
     )
     return redirect(request.referrer or url_for('admin.agenda'))
 
+
+
+# ─────────────────────────────────────────────
+# CU-03 / HU-09 Escenario 2: Reasignación operativa de un turno
+# ─────────────────────────────────────────────
+@admin_bp.route('/turno/<int:id>/reprogramar', methods=['GET', 'POST'])
+@admin_required
+def reprogramar_turno(id):
+    """
+    CU-03 / HU-09 Escenario 2: Reasignación operativa de una cita pendiente en agenda.
+    Despacha una notificación prioritaria al perfil del cliente afectado.
+    """
+    turno = Turno.query.get_or_404(id)
+    veterinarios = Veterinario.query.filter_by(activo=True).all()
+
+    if request.method == 'POST':
+        fecha_str = request.form.get('fecha', '').strip()
+        hora_str = request.form.get('hora', '').strip()
+        vet_id = request.form.get('veterinario_id', type=int)
+
+        if not fecha_str or not hora_str:
+            flash('Por favor ingresá la nueva fecha y hora para la reasignación.', 'danger')
+            return redirect(url_for('admin.reprogramar_turno', id=turno.id))
+
+        try:
+            nueva_fecha_hora = datetime.strptime(f"{fecha_str} {hora_str}", "%Y-%m-%d %H:%M")
+        except ValueError:
+            flash('Fecha u horario inválidos.', 'danger')
+            return redirect(url_for('admin.reprogramar_turno', id=turno.id))
+
+        nuevo_vet = Veterinario.query.get(vet_id) if vet_id else turno.veterinario
+        turno.reasignar(nueva_fecha_hora, nuevo_vet)
+
+        # HU-09 Escenario 2: Notificación prioritaria al cliente afectado
+        noti = Notificacion(
+            usuario_id=turno.usuario_id,
+            mensaje=f"Aviso de reasignación operativa: Tu turno para {turno.mascota.nombre} ({turno.tipo_turno.practica}) fue reprogramado para el {nueva_fecha_hora.strftime('%d/%m/%Y a las %H:%M hs')} con el {turno.veterinario.nombre_completo if turno.veterinario else 'veterinario de turno'}.",
+            tipo='REASIGNACION'
+        )
+        db.session.add(noti)
+        db.session.commit()
+
+        flash(f'✅ Turno de {turno.mascota.nombre} reasignado exitosamente. Se notificó al cliente.', 'success')
+        return redirect(url_for('admin.agenda', fecha=nueva_fecha_hora.strftime('%Y-%m-%d')))
+
+    return render_template('admin/reprogramar_turno.html', turno=turno, veterinarios=veterinarios)
 
 # ─────────────────────────────────────────────
 # CU-15: Ver listado de clientes y sus mascotas

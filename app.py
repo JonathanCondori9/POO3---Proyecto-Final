@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, session
 from config import Config
 from models import db
 from routes.main_routes import main_bp
@@ -7,6 +7,7 @@ from routes.auth_routes import auth_bp
 from routes.mascota_routes import mascota_bp
 from routes.turno_routes import turno_bp
 from routes.admin_routes import admin_bp
+from routes.notificacion_routes import notificacion_bp
 
 def create_app(config_class=Config):
     """Fábrica de la aplicación Flask (Application Factory Pattern)."""
@@ -25,12 +26,28 @@ def create_app(config_class=Config):
         import models  # Asegura que todos los modelos estén cargados
         db.create_all()
 
+    # Inyección de contexto global (ej. contador de notificaciones pendientes para el navbar)
+    @app.context_processor
+    def inject_notificaciones():
+        if 'usuario_id' in session:
+            try:
+                from models.notificacion import Notificacion
+                count = Notificacion.query.filter_by(
+                    usuario_id=session['usuario_id'],
+                    leida=False
+                ).count()
+                return {'notificaciones_no_leidas_count': count}
+            except Exception:
+                return {'notificaciones_no_leidas_count': 0}
+        return {'notificaciones_no_leidas_count': 0}
+
     # Registrar Blueprints (Rutas modulares)
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(mascota_bp)
     app.register_blueprint(turno_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(notificacion_bp)
 
     return app
 

@@ -13,6 +13,8 @@ class Mascota(db.Model):
     especie = db.Column(db.String(50), nullable=False)  # 'Perro', 'Gato', etc.
     raza = db.Column(db.String(100), default='No especificado')
     edad = db.Column(db.String(50), nullable=True)  # Ej: '2 años', '4 meses'
+    peso = db.Column(db.String(30), nullable=True)  # Ej: '8.5 kg', '14 kg'
+    genero = db.Column(db.String(20), nullable=True)  # 'Macho', 'Hembra'
     observaciones = db.Column(db.Text, nullable=True)
 
     # Relaciones POO
