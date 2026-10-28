@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Turnos - VetTurnos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>📅 Mis Turnos</h1>
+        <p>Gestioná tus próximas visitas al consultorio y consultá el historial médico de tus mascotas.</p>
+    </div>
+    <a href="{{ url_for('turnos.reservar_turno') }}" class="btn btn-primary">+ Solicitar Nuevo Turno</a>
+</div>
+
+<!-- SECCIÓN: TURNOS ACTIVOS (PENDIENTES) -->
+<section class="turnos-section">
+    <h2>Próximas Citas Médicas</h2>
+
+    {% if turnos_activos %}
+        <div class="turnos-grid">
+            {% for turno in turnos_activos %}
+                <div class="turno-card activo">
+                    <div class="turno-header">
+                        <span class="turno-fecha">
+                            📆 {{ turno.fecha_hora.strftime('%d/%m/%Y') }}
+                        </span>
+                        <span class="turno-hora">
+                            ⏰ {{ turno.fecha_hora.strftime('%H:%M hs') }}
+                        </span>
+                        <span class="badge-estado estado-pendiente">Pendiente</span>
+                    </div>
+
+                    <div class="turno-body">
+                        <p class="turno-item">
+                            <strong>🐾 Paciente:</strong> {{ turno.mascota.nombre }} 
+                            <span class="pet-badge-sm">{{ turno.mascota.especie }}</span>
+                        </p>
+                        <p class="turno-item">
+                            <strong>🩺 Servicio:</strong> {{ turno.tipo_turno.practica }}
+                            <small class="text-muted">({{ turno.tipo_turno.categoria }} - {{ turno.tipo_turno.duracion_minutos }} min)</small>
+                        </p>
+                        <p class="turno-item">
+                            <strong>👨‍⚕️ Profesional:</strong> {{ turno.veterinario.nombre_completo if turno.veterinario else 'Asignado en recepción' }}
+                        </p>
+                        {% if turno.observaciones %}
+                            <p class="turno-item text-muted">
+                                <em>"{{ turno.observaciones }}"</em>
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <div class="turno-actions">
+                        <a href="{{ url_for('turnos.modificar_turno', id=turno.id) }}" class="btn btn-secondary btn-sm">Reprogramar</a>
+                        <form method="POST" action="{{ url_for('turnos.cancelar_turno', id=turno.id) }}" onsubmit="return confirm('¿Estás seguro de cancelar este turno? El horario quedará liberado inmediatamente para otro paciente.');" style="display:inline;">
+                            <button type="submit" class="btn btn-danger-outline btn-sm">Cancelar Turno</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state-sm">
+            <p>No tenés ninguna cita médica pendiente en este momento.</p>
+            <a href="{{ url_for('turnos.reservar_turno') }}" class="btn btn-primary btn-sm">Reservar una cita ahora</a>
+        </div>
+    {% endif %}
+</section>
+
+<!-- SECCIÓN: HISTORIAL DE ATENCIONES (FINALIZADOS) -->
+<section class="turnos-section" style="margin-top: 3rem;">
+    <h2>Historial de Atenciones Anteriores</h2>
+
+    {% if turnos_historial %}
+        <div class="table-container">
+            <table class="turnos-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Práctica Médica</th>
+                        <th>Profesional</th>
+                        <th>Estado</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for turno in turnos_historial %}
+                        <tr>
+                            <td><strong>{{ turno.fecha_hora.strftime('%d/%m/%Y %H:%M') }}</strong></td>
+                            <td>{{ turno.mascota.nombre }} ({{ turno.mascota.especie }})</td>
+                            <td>{{ turno.tipo_turno.practica }}</td>
+                            <td>{{ turno.veterinario.nombre_completo if turno.veterinario else '-' }}</td>
+                            <td>
+                                {% if turno.estado == 'ATENDIDO' %}
+                                    <span class="badge-estado estado-atendido">Atendido</span>
+                                {% elif turno.estado == 'AUSENTE' %}
+                                    <span class="badge-estado estado-ausente">Ausente</span>
+                                {% elif turno.estado == 'CANCELADO' %}
+                                    <span class="badge-estado estado-cancelado">Cancelado</span>
+                                {% else %}
+                                    <span class="badge-estado">{{ turno.estado }}</span>
+                                {% endif %}
+                            </td>
+                            <td><small class="text-muted">{{ turno.observaciones or '-' }}</small></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted">Aún no registrás atenciones pasadas en el historial.</p>
+    {% endif %}
+</section>
+{% endblock %}

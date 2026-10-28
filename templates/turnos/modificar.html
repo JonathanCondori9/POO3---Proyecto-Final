@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Reprogramar Turno - VetTurnos{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 600px;">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>🔄 Reprogramar Turno</h2>
+            <p>Elegí una nueva fecha y horario para la atención médica.</p>
+        </div>
+
+        <div class="demo-credentials" style="margin-bottom: 1.5rem;">
+            <p><strong>🐾 Paciente:</strong> {{ turno.mascota.nombre }} ({{ turno.mascota.especie }})</p>
+            <p><strong>🩺 Práctica:</strong> {{ turno.tipo_turno.practica }} ({{ turno.tipo_turno.duracion_minutos }} min)</p>
+            <p><strong>📆 Fecha actual:</strong> {{ turno.fecha_hora.strftime('%d/%m/%Y a las %H:%M hs') }}</p>
+        </div>
+
+        <form method="POST" class="styled-form">
+            <div class="form-group">
+                <label for="fecha">Nueva Fecha: *</label>
+                <input type="date" id="fecha" name="fecha" min="{{ hoy }}" required onchange="actualizarHorarios()">
+            </div>
+
+            <div class="form-group">
+                <label>Nuevos Horarios Disponibles: *</label>
+                <div id="slotsContainer" class="slots-container">
+                    <p class="text-muted" style="font-size: 0.9rem;">
+                        👉 Seleccioná una fecha para ver las opciones disponibles.
+                    </p>
+                </div>
+                <input type="hidden" id="hora" name="hora" required>
+                <small id="horaSeleccionadaTexto" style="display:none; color: var(--primary-color); font-weight: bold; margin-top: 0.5rem;"></small>
+            </div>
+
+            <div class="form-buttons">
+                <a href="{{ url_for('turnos.mis_turnos') }}" class="btn btn-secondary">Volver</a>
+                <button type="submit" id="btnSubmitModificar" class="btn btn-primary" disabled>Guardar Nueva Fecha</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function actualizarHorarios() {
+    const fecha = document.getElementById('fecha').value;
+    const container = document.getElementById('slotsContainer');
+    const horaInput = document.getElementById('hora');
+    const btnSubmit = document.getElementById('btnSubmitModificar');
+    const horaTexto = document.getElementById('horaSeleccionadaTexto');
+
+    horaInput.value = '';
+    btnSubmit.disabled = true;
+    horaTexto.style.display = 'none';
+
+    if (!fecha) return;
+
+    container.innerHTML = '<p class="text-muted">⏳ Consultando agenda...</p>';
+
+    try {
+        const response = await fetch(`{{ url_for('turnos.api_disponibilidad') }}?tipo_turno_id={{ turno.tipo_turno.id }}&fecha=${fecha}&turno_id={{ turno.id }}`);
+        const data = await response.json();
+
+        container.innerHTML = '';
+
+        if (!data.ok) {
+            container.innerHTML = `<div class="slot-alert alert-warning">⚠️ ${data.error || 'Día no disponible.'}</div>`;
+            return;
+        }
+
+        if (data.horarios.length === 0) {
+            container.innerHTML = '<div class="slot-alert alert-warning">❌ No quedan horarios disponibles para este día.</div>';
+            return;
+        }
+
+        const pillsWrapper = document.createElement('div');
+        pillsWrapper.className = 'slot-pills';
+
+        data.horarios.forEach(h => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'slot-pill';
+            btn.textContent = h + ' hs';
+            btn.onclick = () => {
+                document.querySelectorAll('.slot-pill').forEach(p => p.classList.remove('selected'));
+                btn.classList.add('selected');
+                horaInput.value = h;
+                btnSubmit.disabled = false;
+                horaTexto.style.display = 'block';
+                horaTexto.textContent = `✓ Nuevo horario seleccionado: ${h} hs`;
+            };
+            pillsWrapper.appendChild(btn);
+        });
+
+        container.appendChild(pillsWrapper);
+
+    } catch (e) {
+        container.innerHTML = '<div class="slot-alert alert-danger">Error al consultar los horarios.</div>';
+    }
+}
+</script>
+{% endblock %}

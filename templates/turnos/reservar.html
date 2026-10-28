@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Reservar Turno - VetTurnos{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 680px;">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>📆 Reservar Turno Médico</h2>
+            <p>Seleccioná a tu mascota, la práctica que necesita y el horario disponible que mejor te convenga.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('turnos.reservar_turno') }}" class="styled-form" id="formReserva">
+            <!-- 1. Mascota -->
+            <div class="form-group">
+                <label for="mascota_id">1. Seleccionar Mascota: *</label>
+                <select id="mascota_id" name="mascota_id" required>
+                    <option value="" disabled {% if not mascota_preseleccionada_id %}selected{% endif %}>Elegí a tu animalito...</option>
+                    {% for m in mascotas %}
+                        <option value="{{ m.id }}" {% if mascota_preseleccionada_id == m.id %}selected{% endif %}>
+                            {% if m.especie.lower() == 'perro' %}🐶{% elif m.especie.lower() == 'gato' %}🐱{% else %}🐾{% endif %}
+                            {{ m.nombre }} ({{ m.especie }} - {{ m.raza }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- 2. Tipo de Turno / Servicio -->
+            <div class="form-group">
+                <label for="tipo_turno_id">2. Servicio o Práctica Médica: *</label>
+                <select id="tipo_turno_id" name="tipo_turno_id" required onchange="actualizarDisponibilidad()">
+                    <option value="" disabled selected>Seleccioná el motivo de atención...</option>
+                    {% for s in tipos_turno %}
+                        <option value="{{ s.id }}" data-dias="{{ s.dias_habilitados }}" data-duracion="{{ s.duracion_minutos }}">
+                            {{ s.practica }} — [{{ s.categoria }}] ({{ s.duracion_minutos }} min | {{ s.dias_habilitados }})
+                        </option>
+                    {% endfor %}
+                </select>
+                <small id="servicioInfo" class="text-muted" style="display:none;"></small>
+            </div>
+
+            <!-- 3. Fecha -->
+            <div class="form-group">
+                <label for="fecha">3. Fecha deseada: *</label>
+                <input type="date" id="fecha" name="fecha" min="{{ hoy }}" required onchange="actualizarDisponibilidad()">
+            </div>
+
+            <!-- 4. Selector de Horarios Disponibles -->
+            <div class="form-group">
+                <label>4. Horarios Disponibles: *</label>
+                <div id="slotsContainer" class="slots-container">
+                    <p class="text-muted" style="font-size: 0.9rem;">
+                        👉 Primero seleccioná un servicio y una fecha para ver los cupos libres.
+                    </p>
+                </div>
+                <!-- Input oculto para enviar la hora seleccionada -->
+                <input type="hidden" id="hora" name="hora" required>
+                <small id="horaSeleccionadaTexto" class="text-muted font-bold" style="display:none; color: var(--primary-color); margin-top: 0.5rem;"></small>
+            </div>
+
+            <!-- 5. Observaciones -->
+            <div class="form-group">
+                <label for="observaciones">5. Observaciones adicionales o síntomas (opcional):</label>
+                <textarea id="observaciones" name="observaciones" rows="2" placeholder="Ej: Control de vacunas pendientes, no come hace 2 días, etc."></textarea>
+            </div>
+
+            <div class="form-buttons">
+                <a href="{{ url_for('turnos.mis_turnos') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" id="btnSubmitReserva" class="btn btn-primary" disabled>Confirmar Reserva</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function actualizarDisponibilidad() {
+    const servicioSelect = document.getElementById('tipo_turno_id');
+    const fechaInput = document.getElementById('fecha');
+    const container = document.getElementById('slotsContainer');
+    const horaInput = document.getElementById('hora');
+    const btnSubmit = document.getElementById('btnSubmitReserva');
+    const horaTexto = document.getElementById('horaSeleccionadaTexto');
+    const infoServicio = document.getElementById('servicioInfo');
+
+    horaInput.value = '';
+    btnSubmit.disabled = true;
+    horaTexto.style.display = 'none';
+
+    const servicioId = servicioSelect.value;
+    const fecha = fechaInput.value;
+
+    if (servicioSelect.selectedIndex > 0) {
+        const option = servicioSelect.options[servicioSelect.selectedIndex];
+        infoServicio.style.display = 'block';
+        infoServicio.innerHTML = `ℹ️ <strong>Días de atención:</strong> ${option.dataset.dias} | <strong>Duración del turno:</strong> ${option.dataset.duracion} minutos.`;
+    }
+
+    if (!servicioId || !fecha) {
+        return;
+    }
+
+    container.innerHTML = '<p class="text-muted">⏳ Consultando disponibilidad de la agenda...</p>';
+
+    try {
+        const response = await fetch(`{{ url_for('turnos.api_disponibilidad') }}?tipo_turno_id=${servicioId}&fecha=${fecha}`);
+        const data = await response.json();
+
+        container.innerHTML = '';
+
+        if (!data.ok) {
+            container.innerHTML = `<div class="slot-alert alert-warning">⚠️ ${data.error || 'Día no disponible.'}</div>`;
+            return;
+        }
+
+        if (data.horarios.length === 0) {
+            container.innerHTML = '<div class="slot-alert alert-warning">❌ No quedan horarios disponibles para este día. Por favor elegí otra fecha.</div>';
+            return;
+        }
+
+        const pillsWrapper = document.createElement('div');
+        pillsWrapper.className = 'slot-pills';
+
+        data.horarios.forEach(h => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'slot-pill';
+            btn.textContent = h + ' hs';
+            btn.onclick = () => {
+                document.querySelectorAll('.slot-pill').forEach(p => p.classList.remove('selected'));
+                btn.classList.add('selected');
+                horaInput.value = h;
+                btnSubmit.disabled = false;
+                horaTexto.style.display = 'block';
+                horaTexto.textContent = `✓ Horario seleccionado: ${h} hs`;
+            };
+            pillsWrapper.appendChild(btn);
+        });
+
+        container.appendChild(pillsWrapper);
+
+    } catch (error) {
+        container.innerHTML = '<div class="slot-alert alert-danger">Error al conectar con la agenda del servidor.</div>';
+    }
+}
+</script>
+{% endblock %}

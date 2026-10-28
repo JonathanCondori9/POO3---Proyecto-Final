@@ -38,7 +38,7 @@
 
                 <div class="pet-actions">
                     <a href="{{ url_for('mascotas.editar_mascota', id=mascota.id) }}" class="btn btn-secondary btn-sm">Editar Datos</a>
-                    <a href="#" class="btn btn-primary btn-sm">Solicitar Turno</a>
+                    <a href="{{ url_for('turnos.reservar_turno', mascota_id=mascota.id) }}" class="btn btn-primary btn-sm">Solicitar Turno</a>
                 </div>
             </div>
         {% endfor %}
