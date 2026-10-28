@@ -8,20 +8,23 @@
         <h1>🛡️ Panel de Administración</h1>
         <p>Resumen del sistema al {{ hoy.strftime('%d/%m/%Y') }}</p>
     </div>
-    <a href="{{ url_for('admin.agenda') }}" class="btn btn-primary">📅 Ver Agenda del Día</a>
+    <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+        <a href="{{ url_for('admin.agenda', pendientes=1) }}" class="btn btn-primary">🕐 Ver Turnos Pendientes</a>
+        <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary">📅 Ver Agenda del Día</a>
+    </div>
 </div>
 
 <!-- Métricas del día -->
 <section class="admin-section">
     <h2>📊 Actividad de Hoy</h2>
     <div class="admin-stats-grid">
-        <div class="stat-card stat-pending">
+        <a href="{{ url_for('admin.agenda', pendientes=1) }}" class="stat-card stat-pending" style="text-decoration:none;">
             <div class="stat-icon">🕐</div>
             <div class="stat-info">
                 <span class="stat-number">{{ pendientes_hoy }}</span>
-                <span class="stat-label">Pendientes</span>
+                <span class="stat-label">Pendientes hoy</span>
             </div>
-        </div>
+        </a>
         <div class="stat-card stat-success">
             <div class="stat-icon">✅</div>
             <div class="stat-info">
@@ -83,7 +86,10 @@
 
 <!-- Próximos turnos -->
 <section class="admin-section">
-    <h2>⏭️ Próximos Turnos Pendientes</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; border-bottom:2px solid var(--primary-subtle); padding-bottom:0.6rem;">
+        <h2 style="margin:0; border:none; padding:0;">⏭️ Próximos Turnos Pendientes</h2>
+        <a href="{{ url_for('admin.agenda', pendientes=1) }}" class="btn btn-sm btn-secondary">Ver todos los pendientes →</a>
+    </div>
     {% if proximos_turnos %}
         <div class="table-container">
             <table class="turnos-table">
@@ -112,7 +118,7 @@
                         <td>{{ t.veterinario.nombre_completo if t.veterinario else '—' }}</td>
                         <td>
                             <a href="{{ url_for('admin.agenda', fecha=t.fecha_hora.strftime('%Y-%m-%d')) }}"
-                               class="btn btn-secondary btn-sm">Ver agenda</a>
+                               class="btn btn-secondary btn-sm">Ver en agenda</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -131,6 +137,10 @@
 <section class="admin-section">
     <h2>🔗 Accesos Rápidos</h2>
     <div class="admin-quick-links">
+        <a href="{{ url_for('admin.agenda', pendientes=1) }}" class="quick-link-card">
+            <span class="quick-link-icon">🕐</span>
+            <span>Turnos Pendientes</span>
+        </a>
         <a href="{{ url_for('admin.agenda') }}" class="quick-link-card">
             <span class="quick-link-icon">📅</span>
             <span>Agenda del Día</span>

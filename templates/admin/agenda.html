@@ -1,14 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Agenda — {{ fecha.strftime('%d/%m/%Y') }} — VetTurnos{% endblock %}
+{% block title %}{% if solo_pendientes %}Turnos Pendientes{% else %}Agenda — {{ fecha.strftime('%d/%m/%Y') }}{% endif %} — VetTurnos{% endblock %}
 
 {% block content %}
 <div class="page-header">
     <div>
-        <h1>📅 Agenda del Día</h1>
-        <p>{{ fecha.strftime('%A %d de %B de %Y').capitalize() }}</p>
+        <h1>{% if solo_pendientes %}🕐 Todos los Turnos Pendientes{% else %}📅 Agenda del Día{% endif %}</h1>
+        <p>{% if solo_pendientes %}Listado general de todas las citas pendientes en el sistema{% else %}{{ fecha.strftime('%A %d de %B de %Y').capitalize() }}{% endif %}</p>
     </div>
-    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Volver al Panel</a>
+    <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+        {% if solo_pendientes %}
+            <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary">📅 Ver Agenda de Hoy</a>
+        {% else %}
+            <a href="{{ url_for('admin.agenda', pendientes=1) }}" class="btn btn-primary">🕐 Ver Todos los Pendientes</a>
+        {% endif %}
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Volver al Panel</a>
+    </div>
 </div>
 
 <!-- Filtros de fecha y veterinario -->
@@ -32,30 +39,38 @@
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+        <button type="submit" class="btn btn-primary btn-sm">Filtrar Fecha</button>
         <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary btn-sm">Hoy</a>
+        
+        <!-- Botón para ver todos los turnos pendientes -->
+        <a href="{{ url_for('admin.agenda', pendientes=1) }}" 
+           class="btn {% if solo_pendientes %}btn-primary{% else %}btn-warning-outline{% endif %} btn-sm">
+            🕐 Ver Todos los Pendientes
+        </a>
     </form>
 </section>
 
-<!-- Tabla de turnos del día -->
+<!-- Tabla de turnos -->
 <section class="admin-section">
     {% if turnos_dia %}
-        <!-- Resumen rápido del día -->
+        <!-- Resumen rápido del día o de pendientes -->
         <div class="agenda-resumen">
             {% set pendientes = turnos_dia | selectattr('estado', 'equalto', 'PENDIENTE') | list %}
             {% set atendidos  = turnos_dia | selectattr('estado', 'equalto', 'ATENDIDO')  | list %}
             {% set ausentes   = turnos_dia | selectattr('estado', 'equalto', 'AUSENTE')   | list %}
-            <span class="badge-estado estado-pendiente">🕐 {{ pendientes|length }} Pendientes</span>
-            <span class="badge-estado estado-atendido">✅ {{ atendidos|length }} Atendidos</span>
-            <span class="badge-estado estado-ausente">⚠️ {{ ausentes|length }} Ausentes</span>
-            <span class="badge-estado estado-cancelado">✖ {{ (turnos_dia|length - pendientes|length - atendidos|length - ausentes|length) }} Cancelados</span>
+            <span class="badge-estado estado-pendiente">🕐 {{ pendientes|length }} Pendiente{{ 's' if pendientes|length != 1 }}</span>
+            {% if not solo_pendientes %}
+                <span class="badge-estado estado-atendido">✅ {{ atendidos|length }} Atendidos</span>
+                <span class="badge-estado estado-ausente">⚠️ {{ ausentes|length }} Ausentes</span>
+                <span class="badge-estado estado-cancelado">✖ {{ (turnos_dia|length - pendientes|length - atendidos|length - ausentes|length) }} Cancelados</span>
+            {% endif %}
         </div>
 
         <div class="table-container" style="margin-top: 1rem;">
             <table class="turnos-table">
                 <thead>
                     <tr>
-                        <th>Hora</th>
+                        <th>{% if solo_pendientes %}Fecha y Hora{% else %}Hora{% endif %}</th>
                         <th>Mascota</th>
                         <th>Propietario</th>
                         <th>Práctica</th>
@@ -67,7 +82,13 @@
                 <tbody>
                     {% for t in turnos_dia %}
                     <tr class="{% if t.estado == 'ATENDIDO' %}row-atendido{% elif t.estado == 'AUSENTE' %}row-ausente{% elif t.estado == 'CANCELADO' %}row-cancelado{% endif %}">
-                        <td class="font-bold">{{ t.fecha_hora.strftime('%H:%M') }}</td>
+                        <td class="font-bold">
+                            {% if solo_pendientes %}
+                                {{ t.fecha_hora.strftime('%d/%m/%Y %H:%M') }} hs
+                            {% else %}
+                                {{ t.fecha_hora.strftime('%H:%M') }} hs
+                            {% endif %}
+                        </td>
                         <td>
                             <span class="pet-badge-sm">
                                 {% if t.mascota.especie.lower() == 'perro' %}🐶{% else %}🐱{% endif %}
@@ -123,11 +144,21 @@
             </table>
         </div>
     {% else %}
+        <!-- Estado vacío con acceso directo a todos los pendientes -->
         <div class="empty-state-sm">
             <span class="empty-icon-sm">📭</span>
-            <p>No hay turnos registrados para esta fecha
-               {% if vet_id_filtro %}con el veterinario seleccionado{% endif %}.</p>
-            <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary">Ver hoy</a>
+            {% if solo_pendientes %}
+                <p>No hay turnos con estado PENDIENTE en el sistema.</p>
+                <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary">Ver agenda de hoy</a>
+            {% else %}
+                <p>No hay turnos registrados para esta fecha {% if vet_id_filtro %}con el veterinario seleccionado{% endif %}.</p>
+                <div style="display: flex; gap: 0.8rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
+                    <a href="{{ url_for('admin.agenda', pendientes=1) }}" class="btn btn-primary btn-sm">
+                        🕐 Ver Todos los Turnos Pendientes
+                    </a>
+                    <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary btn-sm">Ver hoy</a>
+                </div>
+            {% endif %}
         </div>
     {% endif %}
 </section>
