@@ -8,6 +8,15 @@ def login_required(f):
         if 'usuario_id' not in session:
             flash('Por favor, iniciá sesión para acceder a esta sección.', 'info')
             return redirect(url_for('auth.login'))
+
+        # Validar que el usuario siga existiendo en la base de datos (evita 404 si se reinició la BD)
+        from models.usuario import Usuario
+        user = Usuario.query.get(session['usuario_id'])
+        if not user:
+            session.clear()
+            flash('Tu sesión ha expirado o no es válida. Por favor, iniciá sesión nuevamente.', 'info')
+            return redirect(url_for('auth.login'))
+
         return f(*args, **kwargs)
     return decorated_function
 
@@ -18,8 +27,12 @@ def admin_required(f):
         if 'usuario_id' not in session:
             flash('Acceso restringido. Debes iniciar sesión como administrador.', 'danger')
             return redirect(url_for('auth.login'))
-        if session.get('usuario_rol') != 'ADMIN':
+
+        from models.usuario import Usuario
+        user = Usuario.query.get(session['usuario_id'])
+        if not user or not user.es_admin:
             flash('No tienes permisos suficientes para acceder al panel de administración.', 'danger')
             return redirect(url_for('main.index'))
+
         return f(*args, **kwargs)
     return decorated_function

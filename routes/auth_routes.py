@@ -78,7 +78,7 @@ def login():
             
             # Redirección según rol
             if usuario.es_admin:
-                return redirect(url_for('main.index'))  # Luego redirigirá al dashboard admin
+                return redirect(url_for('admin.dashboard'))
             return redirect(url_for('mascotas.mis_mascotas'))
         else:
             flash('Credenciales inválidas. Por favor verifique correo y contraseña.', 'danger')
@@ -98,7 +98,11 @@ def logout():
 @login_required
 def perfil():
     """CU-03: Modificar perfil de usuario autenticado."""
-    usuario = Usuario.query.get_or_404(session['usuario_id'])
+    usuario = Usuario.query.get(session.get('usuario_id'))
+    if not usuario:
+        session.clear()
+        flash('Tu sesión ha expirado. Por favor, iniciá sesión nuevamente.', 'info')
+        return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
         nombre = request.form.get('nombre', '').strip()

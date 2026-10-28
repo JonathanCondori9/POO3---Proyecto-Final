@@ -19,14 +19,17 @@
                     {% endif %}
                     <a href="{{ url_for('mascotas.mis_mascotas') }}">Mis Mascotas</a>
                     <a href="{{ url_for('turnos.mis_turnos') }}">Mis Turnos</a>
-                    <a href="{{ url_for('notificaciones.centro') }}" class="nav-notif-btn" title="Centro de Notificaciones">
-                        🔔 Notificaciones
-                        {% if notificaciones_no_leidas_count and notificaciones_no_leidas_count > 0 %}
-                            <span class="badge-notif">{{ notificaciones_no_leidas_count }}</span>
-                        {% endif %}
-                    </a>
                     <a href="{{ url_for('auth.perfil') }}">Mi Perfil</a>
                     <span class="user-greeting">Hola, <strong>{{ session.get('usuario_nombre') }}</strong></span>
+                    
+                    <!-- Campana de notificaciones al lado de cerrar sesión -->
+                    <a href="{{ url_for('notificaciones.centro') }}" class="nav-bell-link" title="Centro de Notificaciones">
+                        <span class="nav-bell-icon">🔔</span>
+                        {% if notificaciones_no_leidas_count and notificaciones_no_leidas_count > 0 %}
+                            <span class="badge-notif-bubble">{{ notificaciones_no_leidas_count }}</span>
+                        {% endif %}
+                    </a>
+
                     <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar Sesión</a>
                 {% else %}
                     <a href="{{ url_for('auth.registro') }}">Registrarse</a>
