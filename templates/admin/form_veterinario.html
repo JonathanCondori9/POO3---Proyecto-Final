@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Nuevo' if modo == 'nuevo' else 'Editar' }} Veterinario — VetTurnos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{% if modo == 'nuevo' %}➕ Nuevo Veterinario{% else %}✏️ Editar Veterinario{% endif %}</h1>
+        <p>{% if modo == 'nuevo' %}Registrá un nuevo profesional en el sistema.{% else %}Modificá los datos del profesional.{% endif %}</p>
+    </div>
+    <a href="{{ url_for('admin.veterinarios') }}" class="btn btn-secondary">← Volver</a>
+</div>
+
+<div class="form-container">
+    <form method="POST">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nombre">Nombre <span class="required">*</span></label>
+                <input type="text" id="nombre" name="nombre"
+                       value="{{ datos.nombre if datos.nombre is defined else '' }}"
+                       class="form-control" placeholder="Ej: Carlos" required>
+            </div>
+            <div class="form-group">
+                <label for="apellido">Apellido <span class="required">*</span></label>
+                <input type="text" id="apellido" name="apellido"
+                       value="{{ datos.apellido if datos.apellido is defined else '' }}"
+                       class="form-control" placeholder="Ej: Gómez" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="matricula">Matrícula Profesional <span class="required">*</span></label>
+                <input type="text" id="matricula" name="matricula"
+                       value="{{ datos.matricula if datos.matricula is defined else '' }}"
+                       class="form-control" placeholder="Ej: MV-1234" required>
+            </div>
+            <div class="form-group">
+                <label for="especialidad">Especialidad <span class="required">*</span></label>
+                <select id="especialidad" name="especialidad" class="form-control" required>
+                    <option value="">— Seleccioná —</option>
+                    {% set especialidades = ['Clínica General', 'Cirugía', 'Ecografía', 'Dermatología', 'Odontología', 'Nutrición', 'Oncología'] %}
+                    {% for esp in especialidades %}
+                        <option value="{{ esp }}"
+                            {% if (datos.especialidad is defined and datos.especialidad == esp) %}selected{% endif %}>
+                            {{ esp }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="text" id="telefono" name="telefono"
+                       value="{{ datos.telefono if datos.telefono is defined and datos.telefono else '' }}"
+                       class="form-control" placeholder="Ej: 011-4567-8901">
+            </div>
+            <div class="form-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" name="correo"
+                       value="{{ datos.correo if datos.correo is defined and datos.correo else '' }}"
+                       class="form-control" placeholder="veterinario@clinica.com">
+            </div>
+        </div>
+
+        <p class="form-hint"><span class="required">*</span> Campos obligatorios</p>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {% if modo == 'nuevo' %}➕ Registrar Veterinario{% else %}💾 Guardar Cambios{% endif %}
+            </button>
+            <a href="{{ url_for('admin.veterinarios') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

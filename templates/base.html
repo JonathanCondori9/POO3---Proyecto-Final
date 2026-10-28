@@ -15,7 +15,7 @@
                 
                 {% if session.get('usuario_id') %}
                     {% if session.get('usuario_rol') == 'ADMIN' %}
-                        <a href="#" class="badge-role">Panel Admin</a>
+                        <a href="{{ url_for('admin.dashboard') }}" class="badge-role">🛡️ Panel Admin</a>
                     {% endif %}
                     <a href="{{ url_for('mascotas.mis_mascotas') }}">Mis Mascotas</a>
                     <a href="{{ url_for('turnos.mis_turnos') }}">Mis Turnos</a>

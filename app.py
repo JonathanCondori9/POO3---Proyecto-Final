@@ -6,6 +6,7 @@ from routes.main_routes import main_bp
 from routes.auth_routes import auth_bp
 from routes.mascota_routes import mascota_bp
 from routes.turno_routes import turno_bp
+from routes.admin_routes import admin_bp
 
 def create_app(config_class=Config):
     """FÃ¡brica de la aplicaciÃ³n Flask (Application Factory Pattern)."""
@@ -29,6 +30,7 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp)
     app.register_blueprint(mascota_bp)
     app.register_blueprint(turno_bp)
+    app.register_blueprint(admin_bp)
 
     return app
 

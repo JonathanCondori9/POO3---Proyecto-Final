@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Agenda — {{ fecha.strftime('%d/%m/%Y') }} — VetTurnos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>📅 Agenda del Día</h1>
+        <p>{{ fecha.strftime('%A %d de %B de %Y').capitalize() }}</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Volver al Panel</a>
+</div>
+
+<!-- Filtros de fecha y veterinario -->
+<section class="admin-section">
+    <form method="GET" action="{{ url_for('admin.agenda') }}" class="agenda-filtros">
+        <div class="form-group form-group-inline">
+            <label for="fecha">📆 Fecha:</label>
+            <input type="date" id="fecha" name="fecha"
+                   value="{{ fecha.strftime('%Y-%m-%d') }}"
+                   class="form-control form-control-sm">
+        </div>
+        <div class="form-group form-group-inline">
+            <label for="vet_id">👨‍⚕️ Veterinario:</label>
+            <select id="vet_id" name="vet_id" class="form-control form-control-sm">
+                <option value="">— Todos —</option>
+                {% for vet in veterinarios %}
+                    <option value="{{ vet.id }}"
+                        {% if vet_id_filtro == vet.id %}selected{% endif %}>
+                        {{ vet.nombre_completo }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+        <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary btn-sm">Hoy</a>
+    </form>
+</section>
+
+<!-- Tabla de turnos del día -->
+<section class="admin-section">
+    {% if turnos_dia %}
+        <!-- Resumen rápido del día -->
+        <div class="agenda-resumen">
+            {% set pendientes = turnos_dia | selectattr('estado', 'equalto', 'PENDIENTE') | list %}
+            {% set atendidos  = turnos_dia | selectattr('estado', 'equalto', 'ATENDIDO')  | list %}
+            {% set ausentes   = turnos_dia | selectattr('estado', 'equalto', 'AUSENTE')   | list %}
+            <span class="badge-estado estado-pendiente">🕐 {{ pendientes|length }} Pendientes</span>
+            <span class="badge-estado estado-atendido">✅ {{ atendidos|length }} Atendidos</span>
+            <span class="badge-estado estado-ausente">⚠️ {{ ausentes|length }} Ausentes</span>
+            <span class="badge-estado estado-cancelado">✖ {{ (turnos_dia|length - pendientes|length - atendidos|length - ausentes|length) }} Cancelados</span>
+        </div>
+
+        <div class="table-container" style="margin-top: 1rem;">
+            <table class="turnos-table">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Mascota</th>
+                        <th>Propietario</th>
+                        <th>Práctica</th>
+                        <th>Veterinario</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in turnos_dia %}
+                    <tr class="{% if t.estado == 'ATENDIDO' %}row-atendido{% elif t.estado == 'AUSENTE' %}row-ausente{% elif t.estado == 'CANCELADO' %}row-cancelado{% endif %}">
+                        <td class="font-bold">{{ t.fecha_hora.strftime('%H:%M') }}</td>
+                        <td>
+                            <span class="pet-badge-sm">
+                                {% if t.mascota.especie.lower() == 'perro' %}🐶{% else %}🐱{% endif %}
+                                {{ t.mascota.nombre }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ t.usuario.nombre_completo }}
+                            {% if t.usuario.telefono %}
+                                <br><small class="text-muted">📞 {{ t.usuario.telefono }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ t.tipo_turno.nombre }}</td>
+                        <td>{{ t.veterinario.nombre_completo if t.veterinario else '—' }}</td>
+                        <td>
+                            <span class="badge-estado estado-{{ t.estado.lower() }}">
+                                {{ t.estado }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if t.estado == 'PENDIENTE' %}
+                                <!-- Marcar Atendido -->
+                                <form method="POST"
+                                      action="{{ url_for('admin.marcar_atendido', id=t.id) }}"
+                                      style="display:inline;"
+                                      onsubmit="return confirmarAccion('¿Marcar este turno como ATENDIDO?')">
+                                    <input type="hidden" name="observaciones" value="">
+                                    <button type="submit" class="btn btn-sm btn-success-outline"
+                                            title="Marcar como atendido">✅ Atendido</button>
+                                </form>
+                                <!-- Marcar Ausente -->
+                                <form method="POST"
+                                      action="{{ url_for('admin.marcar_ausente', id=t.id) }}"
+                                      style="display:inline;"
+                                      onsubmit="return confirmarAccion('¿Marcar este turno como AUSENTE?')">
+                                    <button type="submit" class="btn btn-sm btn-warning-outline"
+                                            title="Marcar como ausente">⚠️ Ausente</button>
+                                </form>
+                            {% else %}
+                                <span class="text-muted" style="font-size:0.82rem;">Sin acciones</span>
+                                {% if t.observaciones %}
+                                    <br><small class="text-muted">📝 {{ t.observaciones }}</small>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state-sm">
+            <span class="empty-icon-sm">📭</span>
+            <p>No hay turnos registrados para esta fecha
+               {% if vet_id_filtro %}con el veterinario seleccionado{% endif %}.</p>
+            <a href="{{ url_for('admin.agenda') }}" class="btn btn-secondary">Ver hoy</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function confirmarAccion(mensaje) {
+    return confirm(mensaje);
+}
+</script>
+{% endblock %}

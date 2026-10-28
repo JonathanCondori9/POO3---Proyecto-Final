@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Admin — VetTurnos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>🛡️ Panel de Administración</h1>
+        <p>Resumen del sistema al {{ hoy.strftime('%d/%m/%Y') }}</p>
+    </div>
+    <a href="{{ url_for('admin.agenda') }}" class="btn btn-primary">📅 Ver Agenda del Día</a>
+</div>
+
+<!-- Métricas del día -->
+<section class="admin-section">
+    <h2>📊 Actividad de Hoy</h2>
+    <div class="admin-stats-grid">
+        <div class="stat-card stat-pending">
+            <div class="stat-icon">🕐</div>
+            <div class="stat-info">
+                <span class="stat-number">{{ pendientes_hoy }}</span>
+                <span class="stat-label">Pendientes</span>
+            </div>
+        </div>
+        <div class="stat-card stat-success">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+                <span class="stat-number">{{ atendidos_hoy }}</span>
+                <span class="stat-label">Atendidos</span>
+            </div>
+        </div>
+        <div class="stat-card stat-warning">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-info">
+                <span class="stat-number">{{ ausentes_hoy }}</span>
+                <span class="stat-label">Ausentes</span>
+            </div>
+        </div>
+        <div class="stat-card stat-info">
+            <div class="stat-icon">📋</div>
+            <div class="stat-info">
+                <span class="stat-number">{{ turnos_hoy|length }}</span>
+                <span class="stat-label">Total hoy</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Métricas globales -->
+<section class="admin-section">
+    <h2>🏥 Estado General del Sistema</h2>
+    <div class="admin-stats-grid">
+        <div class="stat-card stat-neutral">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <span class="stat-number">{{ total_usuarios }}</span>
+                <span class="stat-label">Clientes registrados</span>
+            </div>
+        </div>
+        <div class="stat-card stat-neutral">
+            <div class="stat-icon">🐾</div>
+            <div class="stat-info">
+                <span class="stat-number">{{ total_mascotas }}</span>
+                <span class="stat-label">Mascotas registradas</span>
+            </div>
+        </div>
+        <div class="stat-card stat-neutral">
+            <div class="stat-icon">👨‍⚕️</div>
+            <div class="stat-info">
+                <span class="stat-number">{{ total_veterinarios }}</span>
+                <span class="stat-label">Veterinarios activos</span>
+            </div>
+        </div>
+        <div class="stat-card stat-neutral">
+            <div class="stat-icon">📆</div>
+            <div class="stat-info">
+                <span class="stat-number">{{ total_turnos_mes }}</span>
+                <span class="stat-label">Turnos este mes</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Próximos turnos -->
+<section class="admin-section">
+    <h2>⏭️ Próximos Turnos Pendientes</h2>
+    {% if proximos_turnos %}
+        <div class="table-container">
+            <table class="turnos-table">
+                <thead>
+                    <tr>
+                        <th>Fecha y Hora</th>
+                        <th>Mascota</th>
+                        <th>Propietario</th>
+                        <th>Práctica</th>
+                        <th>Veterinario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in proximos_turnos %}
+                    <tr>
+                        <td class="font-bold">{{ t.fecha_hora.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>
+                            <span class="pet-badge-sm">
+                                {% if t.mascota.especie.lower() == 'perro' %}🐶{% else %}🐱{% endif %}
+                                {{ t.mascota.nombre }}
+                            </span>
+                        </td>
+                        <td>{{ t.usuario.nombre_completo }}</td>
+                        <td>{{ t.tipo_turno.nombre }}</td>
+                        <td>{{ t.veterinario.nombre_completo if t.veterinario else '—' }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.agenda', fecha=t.fecha_hora.strftime('%Y-%m-%d')) }}"
+                               class="btn btn-secondary btn-sm">Ver agenda</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state-sm">
+            <span class="empty-icon-sm">🎉</span>
+            <p>No hay turnos pendientes próximos.</p>
+        </div>
+    {% endif %}
+</section>
+
+<!-- Accesos rápidos -->
+<section class="admin-section">
+    <h2>🔗 Accesos Rápidos</h2>
+    <div class="admin-quick-links">
+        <a href="{{ url_for('admin.agenda') }}" class="quick-link-card">
+            <span class="quick-link-icon">📅</span>
+            <span>Agenda del Día</span>
+        </a>
+        <a href="{{ url_for('admin.clientes') }}" class="quick-link-card">
+            <span class="quick-link-icon">👥</span>
+            <span>Ver Clientes</span>
+        </a>
+        <a href="{{ url_for('admin.veterinarios') }}" class="quick-link-card">
+            <span class="quick-link-icon">👨‍⚕️</span>
+            <span>Veterinarios</span>
+        </a>
+        <a href="{{ url_for('admin.nuevo_veterinario') }}" class="quick-link-card">
+            <span class="quick-link-icon">➕</span>
+            <span>Nuevo Veterinario</span>
+        </a>
+    </div>
+</section>
+{% endblock %}

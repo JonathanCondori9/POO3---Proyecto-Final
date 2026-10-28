@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Veterinarios — Panel Admin — VetTurnos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>👨‍⚕️ Staff Veterinario</h1>
+        <p>Gestión del equipo profesional de la clínica.</p>
+    </div>
+    <a href="{{ url_for('admin.nuevo_veterinario') }}" class="btn btn-primary">+ Nuevo Veterinario</a>
+</div>
+
+<section class="admin-section">
+    {% if veterinarios %}
+    <div class="table-container">
+        <table class="turnos-table">
+            <thead>
+                <tr>
+                    <th>Profesional</th>
+                    <th>Especialidad</th>
+                    <th>Matrícula</th>
+                    <th>Contacto</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vet in veterinarios %}
+                <tr class="{% if not vet.activo %}row-cancelado{% endif %}">
+                    <td class="font-bold">{{ vet.nombre_completo }}</td>
+                    <td>{{ vet.especialidad }}</td>
+                    <td><code>{{ vet.matricula }}</code></td>
+                    <td>
+                        {% if vet.correo %}
+                            <span style="font-size:0.85rem;">✉️ {{ vet.correo }}</span><br>
+                        {% endif %}
+                        {% if vet.telefono %}
+                            <span style="font-size:0.85rem;">📞 {{ vet.telefono }}</span>
+                        {% endif %}
+                        {% if not vet.correo and not vet.telefono %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if vet.activo %}
+                            <span class="badge-estado estado-atendido">Activo</span>
+                        {% else %}
+                            <span class="badge-estado estado-cancelado">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('admin.editar_veterinario', id=vet.id) }}"
+                           class="btn btn-secondary btn-sm">✏️ Editar</a>
+
+                        <form method="POST"
+                              action="{{ url_for('admin.toggle_veterinario', id=vet.id) }}"
+                              style="display:inline;"
+                              onsubmit="return confirm('¿{{ 'Desactivar' if vet.activo else 'Activar' }} a {{ vet.nombre_completo }}?')">
+                            <button type="submit"
+                                    class="btn btn-sm {% if vet.activo %}btn-warning-outline{% else %}btn-success-outline{% endif %}">
+                                {% if vet.activo %}⏸ Desactivar{% else %}▶ Activar{% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="empty-state-sm">
+            <span class="empty-icon-sm">👨‍⚕️</span>
+            <p>No hay veterinarios registrados.</p>
+            <a href="{{ url_for('admin.nuevo_veterinario') }}" class="btn btn-primary">Registrar el primero</a>
+        </div>
+    {% endif %}
+</section>
+
+<div style="margin-top: 1rem;">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Volver al Panel</a>
+</div>
+{% endblock %}

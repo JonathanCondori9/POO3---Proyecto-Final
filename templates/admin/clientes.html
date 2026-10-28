@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes — Panel Admin — VetTurnos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>👥 Clientes Registrados</h1>
+        <p>Consulta y gestión de propietarios y sus mascotas.</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Panel Admin</a>
+</div>
+
+<!-- Buscador -->
+<section class="admin-section">
+    <form method="GET" action="{{ url_for('admin.clientes') }}" class="agenda-filtros">
+        <div class="form-group form-group-inline" style="flex:1;">
+            <label for="q">🔍 Buscar:</label>
+            <input type="text" id="q" name="q" value="{{ busqueda }}"
+                   placeholder="Nombre, apellido o email..."
+                   class="form-control form-control-sm">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
+        {% if busqueda %}
+            <a href="{{ url_for('admin.clientes') }}" class="btn btn-secondary btn-sm">Limpiar</a>
+        {% endif %}
+    </form>
+</section>
+
+<!-- Listado de clientes -->
+<section class="admin-section">
+    {% if clientes %}
+        <p class="text-muted" style="margin-bottom: 1rem; font-size: 0.9rem;">
+            {{ clientes|length }} cliente{{ 's' if clientes|length != 1 }} encontrado{{ 's' if clientes|length != 1 }}.
+        </p>
+        {% for cliente in clientes %}
+        <div class="cliente-card">
+            <div class="cliente-card-header">
+                <div>
+                    <strong>{{ cliente.nombre_completo }}</strong>
+                    <span class="text-muted" style="font-size: 0.85rem;"> — {{ cliente.email }}</span>
+                </div>
+                <div class="cliente-card-meta">
+                    {% if cliente.telefono %}
+                        <span class="text-muted">📞 {{ cliente.telefono }}</span>
+                    {% endif %}
+                    <span class="badge-estado estado-pendiente" style="font-size:0.75rem;">
+                        {{ cliente.mascotas|length }} mascota{{ 's' if cliente.mascotas|length != 1 }}
+                    </span>
+                    <span class="text-muted" style="font-size:0.78rem;">
+                        Desde {{ cliente.created_at.strftime('%m/%Y') }}
+                    </span>
+                </div>
+            </div>
+
+            {% if cliente.mascotas %}
+            <div class="cliente-mascotas">
+                {% for mascota in cliente.mascotas %}
+                <div class="mascota-item-sm">
+                    <span>
+                        {% if mascota.especie.lower() == 'perro' %}🐶{% else %}🐱{% endif %}
+                        <strong>{{ mascota.nombre }}</strong>
+                    </span>
+                    <span class="text-muted">{{ mascota.especie }} · {{ mascota.raza }}</span>
+                    {% if mascota.edad %}
+                        <span class="text-muted">{{ mascota.edad }}</span>
+                    {% endif %}
+                    <span class="pet-badge-sm">
+                        {{ mascota.turnos|length }} turno{{ 's' if mascota.turnos|length != 1 }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted" style="padding: 0.6rem 1.2rem; font-size:0.88rem;">
+                Sin mascotas registradas aún.
+            </p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state-sm">
+            <span class="empty-icon-sm">👤</span>
+            {% if busqueda %}
+                <p>No se encontraron clientes para "<strong>{{ busqueda }}</strong>".</p>
+                <a href="{{ url_for('admin.clientes') }}" class="btn btn-secondary">Ver todos</a>
+            {% else %}
+                <p>No hay clientes registrados en el sistema.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
