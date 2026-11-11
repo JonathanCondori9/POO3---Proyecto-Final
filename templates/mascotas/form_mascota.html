@@ -40,13 +40,13 @@
 
             <div class="form-row">
                 <div class="form-group col">
-                    <label for="peso">Peso (kg): <small class="text-muted">(números y letras, ej: 8.5 kg)</small></label>
+                    <label for="peso">Peso (kg): <small class="text-muted">(solo números, ej: 8.5 o 12)</small></label>
                     <input type="text" id="peso" name="peso" 
                            value="{{ mascota.peso if mascota and mascota.peso and mascota.peso != 'No especificado' else '' }}" 
-                           placeholder="Ej: 8.5 kg o 12 kg"
-                           pattern=".*[0-9].*"
-                           oninput="this.value = this.value.replace(/[^0-9a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.,]/g, '')"
-                           title="El peso debe incluir números y letras (ej: 8.5 kg o 12 kg).">
+                           placeholder="Ej: 8.5 o 12"
+                           pattern="[0-9]+([\.,][0-9]+)?"
+                           oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, '')"
+                           title="El peso solo permite números (ej: 8.5 o 12).">
                 </div>
 
                 <div class="form-group col">
@@ -97,9 +97,9 @@ document.getElementById('formMascota').addEventListener('submit', function(e) {
         return;
     }
 
-    // 2. Peso: debe contener al menos un número (ej: 8.5 kg o 12 kg)
-    if (peso !== '' && !/\d/.test(peso)) {
-        alert('En el apartado de Peso debes ingresar números y letras (ej: 8.5 kg o 12 kg).');
+    // 2. Peso: solo números (ej: 8.5 o 12)
+    if (peso !== '' && !/^[0-9]+([\.,][0-9]+)?$/.test(peso)) {
+        alert('En el apartado de Peso solo se permiten números (ej: 8.5 o 12).');
         e.preventDefault();
         return;
     }

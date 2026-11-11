@@ -51,7 +51,7 @@ def poblar_base_de_datos():
             especie="Perro",
             raza="Golden Retriever",
             edad="3",
-            peso="28 kg",
+            peso="28",
             genero="Macho",
             observaciones="Alérgico a picaduras de pulgas."
         )
@@ -61,7 +61,7 @@ def poblar_base_de_datos():
             especie="Gato",
             raza="Siamés",
             edad="1",
-            peso="4.2 kg",
+            peso="4.2",
             genero="Hembra",
             observaciones="Plan de vacunación al día."
         )

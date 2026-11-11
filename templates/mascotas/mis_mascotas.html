@@ -32,7 +32,7 @@
                     <p><strong>Raza:</strong> {{ mascota.raza }}</p>
                     <p><strong>Edad:</strong> {% if mascota.edad and mascota.edad.isdigit() %}{{ mascota.edad }} {{ 'año' if mascota.edad == '1' else 'años' }}{% elif mascota.edad and mascota.edad != 'No especificado' %}{{ mascota.edad }}{% else %}No especificada{% endif %}</p>
                     {% if mascota.peso and mascota.peso != 'No especificado' %}
-                        <p><strong>Peso:</strong> {{ mascota.peso }}</p>
+                        <p><strong>Peso:</strong> {{ mascota.peso }}{% if 'kg' not in mascota.peso.lower() %} kg{% endif %}</p>
                     {% endif %}
                     {% if mascota.genero and mascota.genero != 'No especificado' %}
                         <p><strong>Género:</strong> {{ mascota.genero }}</p>

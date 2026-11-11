@@ -45,10 +45,16 @@ def nueva_mascota():
             flash('En el apartado de Raza no se permiten números, solo letras (ej: Mestizo, Caniche).', 'danger')
             return render_template('mascotas/form_mascota.html', titulo='Agregar Mascota', accion='Crear', mascota=form_data)
 
-        # 2. Peso: debe contener números y letras (ej: 8.5 kg o 12 kg)
-        if peso != 'No especificado' and not any(c.isdigit() for c in peso):
-            flash('En el apartado de Peso se deben ingresar números y letras (ej: 8.5 kg o 12 kg).', 'danger')
-            return render_template('mascotas/form_mascota.html', titulo='Agregar Mascota', accion='Crear', mascota=form_data)
+        # 2. Peso: solo números (ej: 8.5 o 12)
+        if peso != 'No especificado':
+            peso_val = peso.replace(',', '.')
+            try:
+                val = float(peso_val)
+                if val <= 0:
+                    raise ValueError()
+            except ValueError:
+                flash('En el apartado de Peso solo se permiten números (ej: 8.5 o 12).', 'danger')
+                return render_template('mascotas/form_mascota.html', titulo='Agregar Mascota', accion='Crear', mascota=form_data)
 
         # 3. Edad aproximada: solo números
         if edad != 'No especificado' and not edad.isdigit():
@@ -115,10 +121,16 @@ def editar_mascota(id):
             flash('En el apartado de Raza no se permiten números, solo letras (ej: Mestizo, Caniche).', 'danger')
             return render_template('mascotas/form_mascota.html', titulo='Editar Mascota', accion='Guardar', mascota=form_data)
 
-        # 2. Peso: debe contener números y letras (ej: 8.5 kg o 12 kg)
-        if peso != 'No especificado' and not any(c.isdigit() for c in peso):
-            flash('En el apartado de Peso se deben ingresar números y letras (ej: 8.5 kg o 12 kg).', 'danger')
-            return render_template('mascotas/form_mascota.html', titulo='Editar Mascota', accion='Guardar', mascota=form_data)
+        # 2. Peso: solo números (ej: 8.5 o 12)
+        if peso != 'No especificado':
+            peso_val = peso.replace(',', '.')
+            try:
+                val = float(peso_val)
+                if val <= 0:
+                    raise ValueError()
+            except ValueError:
+                flash('En el apartado de Peso solo se permiten números (ej: 8.5 o 12).', 'danger')
+                return render_template('mascotas/form_mascota.html', titulo='Editar Mascota', accion='Guardar', mascota=form_data)
 
         # 3. Edad aproximada: solo números
         if edad != 'No especificado' and not edad.isdigit():
