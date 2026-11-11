@@ -26,9 +26,34 @@ def nueva_mascota():
         genero = request.form.get('genero', '').strip() or 'No especificado'
         observaciones = request.form.get('observaciones', '').strip()
 
+        form_data = {
+            'nombre': nombre,
+            'especie': especie,
+            'raza': raza,
+            'edad': edad,
+            'peso': peso,
+            'genero': genero,
+            'observaciones': observaciones
+        }
+
         if not nombre or not especie:
             flash('El nombre y la especie son obligatorios.', 'danger')
-            return render_template('mascotas/form_mascota.html', titulo='Agregar Mascota', accion='Crear')
+            return render_template('mascotas/form_mascota.html', titulo='Agregar Mascota', accion='Crear', mascota=form_data)
+
+        # 1. Raza: no permitir números
+        if raza != 'No especificado' and any(c.isdigit() for c in raza):
+            flash('En el apartado de Raza no se permiten números, solo letras (ej: Mestizo, Caniche).', 'danger')
+            return render_template('mascotas/form_mascota.html', titulo='Agregar Mascota', accion='Crear', mascota=form_data)
+
+        # 2. Peso: debe contener números y letras (ej: 8.5 kg o 12 kg)
+        if peso != 'No especificado' and not any(c.isdigit() for c in peso):
+            flash('En el apartado de Peso se deben ingresar números y letras (ej: 8.5 kg o 12 kg).', 'danger')
+            return render_template('mascotas/form_mascota.html', titulo='Agregar Mascota', accion='Crear', mascota=form_data)
+
+        # 3. Edad aproximada: solo números
+        if edad != 'No especificado' and not edad.isdigit():
+            flash('En el apartado de Edad aproximada solo se permiten números (ej: 2, 3).', 'danger')
+            return render_template('mascotas/form_mascota.html', titulo='Agregar Mascota', accion='Crear', mascota=form_data)
 
         nueva = Mascota(
             usuario_id=session['usuario_id'],
@@ -70,9 +95,35 @@ def editar_mascota(id):
         genero = request.form.get('genero', '').strip() or 'No especificado'
         observaciones = request.form.get('observaciones', '').strip()
 
+        form_data = {
+            'id': id,
+            'nombre': nombre,
+            'especie': especie,
+            'raza': raza,
+            'edad': edad,
+            'peso': peso,
+            'genero': genero,
+            'observaciones': observaciones
+        }
+
         if not nombre or not especie:
             flash('El nombre y la especie son obligatorios.', 'danger')
-            return render_template('mascotas/form_mascota.html', titulo='Editar Mascota', accion='Guardar', mascota=mascota)
+            return render_template('mascotas/form_mascota.html', titulo='Editar Mascota', accion='Guardar', mascota=form_data)
+
+        # 1. Raza: no permitir números
+        if raza != 'No especificado' and any(c.isdigit() for c in raza):
+            flash('En el apartado de Raza no se permiten números, solo letras (ej: Mestizo, Caniche).', 'danger')
+            return render_template('mascotas/form_mascota.html', titulo='Editar Mascota', accion='Guardar', mascota=form_data)
+
+        # 2. Peso: debe contener números y letras (ej: 8.5 kg o 12 kg)
+        if peso != 'No especificado' and not any(c.isdigit() for c in peso):
+            flash('En el apartado de Peso se deben ingresar números y letras (ej: 8.5 kg o 12 kg).', 'danger')
+            return render_template('mascotas/form_mascota.html', titulo='Editar Mascota', accion='Guardar', mascota=form_data)
+
+        # 3. Edad aproximada: solo números
+        if edad != 'No especificado' and not edad.isdigit():
+            flash('En el apartado de Edad aproximada solo se permiten números (ej: 2, 3).', 'danger')
+            return render_template('mascotas/form_mascota.html', titulo='Editar Mascota', accion='Guardar', mascota=form_data)
 
         mascota.nombre = nombre
         mascota.especie = especie

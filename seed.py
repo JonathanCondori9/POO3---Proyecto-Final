@@ -50,7 +50,7 @@ def poblar_base_de_datos():
             nombre="Milo",
             especie="Perro",
             raza="Golden Retriever",
-            edad="3 años",
+            edad="3",
             peso="28 kg",
             genero="Macho",
             observaciones="Alérgico a picaduras de pulgas."
@@ -60,7 +60,7 @@ def poblar_base_de_datos():
             nombre="Luna",
             especie="Gato",
             raza="Siamés",
-            edad="1 año",
+            edad="1",
             peso="4.2 kg",
             genero="Hembra",
             observaciones="Plan de vacunación al día."

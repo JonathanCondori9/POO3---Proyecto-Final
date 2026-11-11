@@ -10,7 +10,7 @@
             <p>Completá los datos de tu mascota (animales chicos: perros y gatos).</p>
         </div>
 
-        <form method="POST" class="styled-form">
+        <form method="POST" class="styled-form" id="formMascota">
             <div class="form-group">
                 <label for="nombre">Nombre de la Mascota: *</label>
                 <input type="text" id="nombre" name="nombre" value="{{ mascota.nombre if mascota else '' }}" required placeholder="Ej: Milo, Luna, Rocco">
@@ -28,15 +28,25 @@
                 </div>
 
                 <div class="form-group col">
-                    <label for="raza">Raza:</label>
-                    <input type="text" id="raza" name="raza" value="{{ mascota.raza if mascota and mascota.raza != 'No especificado' else '' }}" placeholder="Ej: Mestizo, Caniche, Siamés">
+                    <label for="raza">Raza: <small class="text-muted">(solo letras)</small></label>
+                    <input type="text" id="raza" name="raza" 
+                           value="{{ mascota.raza if mascota and mascota.raza != 'No especificado' else '' }}" 
+                           placeholder="Ej: Mestizo, Caniche, Siamés"
+                           pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ\s\-]+"
+                           oninput="this.value = this.value.replace(/[0-9]/g, '')"
+                           title="La raza no permite números, solo letras y espacios.">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col">
-                    <label for="peso">Peso (kg):</label>
-                    <input type="text" id="peso" name="peso" value="{{ mascota.peso if mascota and mascota.peso and mascota.peso != 'No especificado' else '' }}" placeholder="Ej: 8.5 kg, 12 kg">
+                    <label for="peso">Peso (kg): <small class="text-muted">(números y letras, ej: 8.5 kg)</small></label>
+                    <input type="text" id="peso" name="peso" 
+                           value="{{ mascota.peso if mascota and mascota.peso and mascota.peso != 'No especificado' else '' }}" 
+                           placeholder="Ej: 8.5 kg o 12 kg"
+                           pattern=".*[0-9].*"
+                           oninput="this.value = this.value.replace(/[^0-9a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.,]/g, '')"
+                           title="El peso debe incluir números y letras (ej: 8.5 kg o 12 kg).">
                 </div>
 
                 <div class="form-group col">
@@ -50,8 +60,13 @@
             </div>
 
             <div class="form-group">
-                <label for="edad">Edad aproximada:</label>
-                <input type="text" id="edad" name="edad" value="{{ mascota.edad if mascota and mascota.edad != 'No especificado' else '' }}" placeholder="Ej: 3 años, 6 meses">
+                <label for="edad">Edad aproximada: <small class="text-muted">(solo números en años)</small></label>
+                <input type="text" id="edad" name="edad" 
+                       value="{{ mascota.edad if mascota and mascota.edad != 'No especificado' else '' }}" 
+                       placeholder="Ej: 3"
+                       pattern="[0-9]+"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                       title="La edad solo permite números.">
             </div>
 
             <div class="form-group">
@@ -66,4 +81,35 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('formMascota').addEventListener('submit', function(e) {
+    const raza = document.getElementById('raza').value.trim();
+    const peso = document.getElementById('peso').value.trim();
+    const edad = document.getElementById('edad').value.trim();
+
+    // 1. Raza: no debe contener números
+    if (raza !== '' && /\d/.test(raza)) {
+        alert('En el apartado de Raza no se permiten números, solo letras (ej: Mestizo, Caniche).');
+        e.preventDefault();
+        return;
+    }
+
+    // 2. Peso: debe contener al menos un número (ej: 8.5 kg o 12 kg)
+    if (peso !== '' && !/\d/.test(peso)) {
+        alert('En el apartado de Peso debes ingresar números y letras (ej: 8.5 kg o 12 kg).');
+        e.preventDefault();
+        return;
+    }
+
+    // 3. Edad: solo números
+    if (edad !== '' && /\D/.test(edad)) {
+        alert('En el apartado de Edad aproximada solo se permiten números (ej: 2, 3).');
+        e.preventDefault();
+        return;
+    }
+});
+</script>
 {% endblock %}
